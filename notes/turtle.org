@@ -12,7 +12,32 @@
     - 全面的金融市场经验 :: 了解金融市场运行的细节
     - 程序开发能力 :: 能够把策略与模型转化成代码
     - 持续学习 :: 掌握市场的变化
-
-
                  
-深入浅出统计学
+** lesson 6: 跑一次完整的海龟策略回测
+
+由于我本机的 Windows 安装过了太多的软件，导致 Python 无法正确地导入 PyQt5。所以我是在 VirtualBox 中 Windows 7 虚拟机中完成的环境搭建。
+
+- 搭建 Windows 7 虚拟机
+  - 激活
+  - 升级到 SP1
+- 安装 MongoDB 稳定版
+  - 下载地址 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.5-signed.msi
+  - 选择 complete
+  - 选择 Install MongoDB as a Service
+  - 取消 Insatll MongoDB compass，下一步单独安装
+  - 虚拟机中，启动 MongoDB Service 失败的话
+    - 假设 MongoDB 的安装目录是 C:\MongoDB
+    - 在命令行运行 C:\MongoDB\bin>mongod.exe --dbpath c:\MongoDB\data  ，即可启动 Monghttps://share.weiyun.com/5sOk9cKoDB
+- 安装 MongoDB Compass
+  - 下载地址 https://downloads.mongodb.com/compass/mongodb-compass-1.16.3-win32-x64.exe
+  - 安装后，默认设置，点击 connect。成功后，说明 MongoDB 已经成功启动。
+- 下载相关数据
+  - 下载地址 https://share.weiyun.com/5sOk9cK
+  - 解压缩
+  - 进入 data 目录
+    - 运行 python loadCsv.py 导入数据到数据库
+  - 进入 turtle 目录
+    - 运行 jupyter note 命令
+    - 跳出的浏览器中，点击  run.ipynb
+    - 运行代码观察结果。
+

@@ -1,4 +1,4 @@
-# 数字货币量化交易框架
+# 程序化交易框架
 
 <h1 align="center"><img src="logo.png" alt=""></h1>
 <p align="center">

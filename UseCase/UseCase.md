@@ -1,4 +1,4 @@
-# [jili](jili) 用例
+# [jili](1) 用例
 
 ## 系统使用概述
 
@@ -11,4 +11,4 @@ jili 提供了一个程序化交易平台，让用户根据需要配置策略。
 无论是`回测`还是`实盘`，用户都能实时地监控系统运行情况。
 
 ---
-[jili]: https://github.com/aQuaYi/jili "jili"
+[1]: https://github.com/aQuaYi/jili "jili"

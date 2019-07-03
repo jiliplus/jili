@@ -9,3 +9,10 @@
 | 用户目标   |   :boat:   |   `:boat:`   |
 | 子功能     |   :fish:   |   `:fish:`   |
 | 细节       |  :anchor:  |  `:anchor:`  |
+
+## 设计范围
+
+| 设计范围 |    图标     |     代码      |
+| -------- | :---------: | :-----------: |
+| 系统     |  :package:  |  `:package:`  |
+| 构件     | :paperclip: | `:paperclip:` |

@@ -9,3 +9,7 @@
   <img src="https://codecov.io/gh/aQuaYi/jili/branch/master/graph/badge.svg" />
 </a>
 </p>
+
+## 用例
+
+为了更好地开发这个项目，我编写了[用例](UseCase)。

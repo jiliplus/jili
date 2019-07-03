@@ -1,5 +1,7 @@
 # 用例说明
 
+[点击此行，查看 jili 用例](UseCase.md)
+
 编写用例方法来自于
 
 [![编写有效用例-封面](编写有效用例-封面.jpg)](https://book.douban.com/subject/1233316/)

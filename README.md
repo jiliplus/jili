@@ -8,6 +8,9 @@
 <a href="https://codecov.io/gh/aQuaYi/jili">
   <img src="https://codecov.io/gh/aQuaYi/jili/branch/master/graph/badge.svg" />
 </a>
+<a href="https://golang.google.cn">
+  <img src="https://img.shields.io/badge/Go-1.12-blue.svg?logo=Go" />
+</a>
 </p>
 
 ## 用例

@@ -1,7 +1,7 @@
 package jili
 
-// Or return a channel
-// The channel will be closed if any one of dones be closed.
+// Or return a DONE channel
+// The DONE channel will be closed if any one of dones is closed.
 func Or(dones ...<-chan struct{}) <-chan struct{} {
 	if len(dones) == 0 {
 		panic("Or 没有输入参数")

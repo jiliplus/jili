@@ -1,6 +1,7 @@
-package jili
+package stream
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"testing"
@@ -10,6 +11,7 @@ import (
 )
 
 func TestOr(t *testing.T) {
+
 	Convey("如果 or 没有输入参数, 会 panic", t, func() {
 		So(func() { Or() }, ShouldPanicWith, "Or 没有输入参数")
 	})
@@ -47,6 +49,135 @@ func TestOr(t *testing.T) {
 
 			done = make(chan struct{})
 			dones = append(dones, done)
+		}
+	})
+
+	sig := func(t time.Duration) <-chan struct{} {
+		done := make(chan struct{})
+		go func() {
+			defer close(done)
+			time.Sleep(t)
+		}()
+		return done
+	}
+
+	Convey("Or 的返回值会和最先关闭的输入参数一起关闭", t, func() {
+		begin := time.Now()
+		<-Or(
+			sig(100*time.Hour),
+			sig(100*time.Minute),
+			sig(100*time.Second),
+			sig(100*time.Millisecond),
+		)
+		So(time.Now(), ShouldHappenWithin, 110*time.Millisecond, begin)
+	})
+
+}
+
+func TestRepeat(t *testing.T) {
+	Convey("如果有一个对 i 进行累加的函数", t, func() {
+		i := 0
+		fn := func() func() interface{} {
+			return func() interface{} {
+				i++
+				return i
+			}
+		}()
+		ctx, cancel := context.WithCancel(context.Background())
+
+		Convey("放入 repeat 后", func() {
+
+			valStream := Repeat(ctx.Done(), fn)
+
+			Convey("收到的值，应该递增", func() {
+				for i := 1; i < 10; i++ {
+					val := (<-valStream).(int)
+					So(val, ShouldEqual, i)
+				}
+			})
+
+			Convey("关闭后，", func() {
+				cancel()
+
+				val, ok := <-valStream
+				Convey("立即获取的话，由于 select 的运行机制，还是有可能获取到 1", func() {
+					if ok {
+						So(val, ShouldEqual, 1)
+					} else {
+						So(val, ShouldBeNil)
+					}
+				})
+
+				val, ok = <-valStream
+				Convey("再次获取，一定是获取到默认值", func() {
+					So(val, ShouldBeNil)
+					So(ok, ShouldBeFalse)
+				})
+
+			})
+		})
+	})
+}
+
+func TestFanOut(t *testing.T) {
+	count := 100
+
+	// worker 把收到的值转发出去
+	worker := func(done <-chan struct{}, stream <-chan interface{}) <-chan interface{} {
+		resStream := make(chan interface{})
+		go func() {
+			defer close(resStream)
+			for {
+				select {
+				case <-done:
+					return
+				case val, ok := <-stream:
+					if ok {
+						resStream <- val
+					} else {
+						return
+					}
+				}
+			}
+		}()
+		return resStream
+	}
+
+	// stream 产生了 [0,count) 的数据流
+	streamFn := func() <-chan interface{} {
+		res := make(chan interface{})
+		go func() {
+			defer close(res)
+			for i := 0; i < count; i++ {
+				res <- i
+			}
+		}()
+		return res
+	}
+
+	stream := streamFn()
+
+	Convey("如果想要多个 worker 分担 stream 中来的工作，", t, func() {
+		for num := 1; num < 12; num++ {
+			Convey(fmt.Sprintf("当有 %d 个 worker 的时候", num), func() {
+				record := make([]int, count)
+
+				outs := FanOut(nil, worker, stream, num)
+				for _, ch := range outs {
+					for index := range ch {
+						record[index.(int)]++
+					}
+				}
+
+				Convey("每个记录的值，都应该是 1", func() {
+					for i := 0; i < count; i++ {
+						So(record[i], ShouldEqual, 1)
+					}
+				})
+			})
+			Reset(func() {
+				stream = streamFn()
+			})
 		}
 	})
 

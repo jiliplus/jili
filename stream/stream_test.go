@@ -64,10 +64,10 @@ func TestOr(t *testing.T) {
 	Convey("Or 的返回值会和最先关闭的输入参数一起关闭", t, func() {
 		begin := time.Now()
 		<-Or(
-			sig(100*time.Hour),
-			sig(100*time.Minute),
-			sig(100*time.Second),
 			sig(100*time.Millisecond),
+			sig(100*time.Second),
+			sig(100*time.Minute),
+			sig(100*time.Hour),
 		)
 		So(time.Now(), ShouldHappenWithin, 110*time.Millisecond, begin)
 	})
@@ -119,44 +119,43 @@ func TestRepeat(t *testing.T) {
 	})
 }
 
-func TestFanOut(t *testing.T) {
-	count := 100
-
-	// worker 把收到的值转发出去
-	worker := func(done <-chan struct{}, stream <-chan interface{}) <-chan interface{} {
-		resStream := make(chan interface{})
-		go func() {
-			defer close(resStream)
-			for {
-				select {
-				case <-done:
+// worker 把收到的值转发出去
+var worker = func(done <-chan struct{}, stream <-chan interface{}) <-chan interface{} {
+	resStream := make(chan interface{})
+	go func() {
+		defer close(resStream)
+		for {
+			select {
+			case <-done:
+				return
+			case val, ok := <-stream:
+				if ok {
+					resStream <- val
+				} else {
 					return
-				case val, ok := <-stream:
-					if ok {
-						resStream <- val
-					} else {
-						return
-					}
 				}
 			}
-		}()
-		return resStream
-	}
+		}
+	}()
+	return resStream
+}
 
-	// stream 产生了 [0,count) 的数据流
-	streamFn := func() <-chan interface{} {
-		res := make(chan interface{})
-		go func() {
-			defer close(res)
-			for i := 0; i < count; i++ {
-				res <- i
-			}
-		}()
-		return res
-	}
+var count = 100
 
+// stream 产生了 [0,count) 的数据流
+var streamFn = func() <-chan interface{} {
+	res := make(chan interface{})
+	go func() {
+		defer close(res)
+		for i := 0; i < count; i++ {
+			res <- i
+		}
+	}()
+	return res
+}
+
+func TestFanOut(t *testing.T) {
 	stream := streamFn()
-
 	Convey("如果想要多个 worker 分担 stream 中来的工作，", t, func() {
 		for num := 1; num < 12; num++ {
 			Convey(fmt.Sprintf("当有 %d 个 worker 的时候", num), func() {
@@ -180,5 +179,27 @@ func TestFanOut(t *testing.T) {
 			})
 		}
 	})
+}
 
+func TestFanIn(t *testing.T) {
+	stream := streamFn()
+	Convey("如果想要多个 worker 分担 stream 中来的工作，", t, func() {
+		for num := 1; num < 12; num++ {
+			Convey(fmt.Sprintf("当有 %d 个 worker 的时候", num), func() {
+				record := make([]int, count)
+				outs := FanOut(nil, worker, stream, num)
+				for index := range FanIn(nil, outs...) {
+					record[index.(int)]++
+				}
+				Convey("每个记录的值，都应该是 1", func() {
+					for i := 0; i < count; i++ {
+						So(record[i], ShouldEqual, 1)
+					}
+				})
+			})
+			Reset(func() {
+				stream = streamFn()
+			})
+		}
+	})
 }

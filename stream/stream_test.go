@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/prashantv/gostub"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -69,7 +70,7 @@ func TestOr(t *testing.T) {
 			sig(100*time.Minute),
 			sig(100*time.Hour),
 		)
-		So(time.Now(), ShouldHappenWithin, 110*time.Millisecond, begin)
+		So(time.Now(), ShouldHappenWithin, 120*time.Millisecond, begin)
 	})
 
 }
@@ -142,8 +143,8 @@ var worker = func(done <-chan struct{}, stream <-chan interface{}) <-chan interf
 
 var count = 100
 
-// stream 产生了 [0,count) 的数据流
-var streamFn = func() <-chan interface{} {
+// streamMaker 返回的 channel 会输出 [0,count) 的数据流
+var streamMaker = func() <-chan interface{} {
 	res := make(chan interface{})
 	go func() {
 		defer close(res)
@@ -155,7 +156,7 @@ var streamFn = func() <-chan interface{} {
 }
 
 func TestFanOut(t *testing.T) {
-	stream := streamFn()
+	stream := streamMaker()
 	Convey("如果想要多个 worker 分担 stream 中来的工作，", t, func() {
 		for num := 1; num < 12; num++ {
 			Convey(fmt.Sprintf("当有 %d 个 worker 的时候", num), func() {
@@ -175,14 +176,14 @@ func TestFanOut(t *testing.T) {
 				})
 			})
 			Reset(func() {
-				stream = streamFn()
+				stream = streamMaker()
 			})
 		}
 	})
 }
 
 func TestFanIn(t *testing.T) {
-	stream := streamFn()
+	stream := streamMaker()
 	Convey("如果想要多个 worker 分担 stream 中来的工作，", t, func() {
 		for num := 1; num < 12; num++ {
 			Convey(fmt.Sprintf("当有 %d 个 worker 的时候", num), func() {
@@ -198,8 +199,104 @@ func TestFanIn(t *testing.T) {
 				})
 			})
 			Reset(func() {
-				stream = streamFn()
+				stream = streamMaker()
 			})
 		}
 	})
+}
+
+func TestOrDone(t *testing.T) {
+	Convey("存在一个输出流 stream，", t, func() {
+		stream := streamMaker()
+		Convey("利用 OrDone 可以按照顺序读取 stream 中的内容。", func() {
+			expected := 0
+			var val interface{}
+			for val = range OrDone(nil, stream) {
+				So(val, ShouldResemble, expected)
+				expected++
+			}
+			So(expected, ShouldEqual, count)
+		})
+	})
+
+	Convey("当输入流 stream 阻塞时，", t, func() {
+		done := make(chan struct{})
+		var wg sync.WaitGroup
+		wg.Add(1)
+		//
+		defer gostub.Stub(&orDoneStub1, func() {
+			wg.Done()
+		}).Reset()
+		//
+		resStream := OrDone(done, nil)
+		Convey("输出流应该是阻塞的。", func() {
+			isBlocked := false
+			select {
+			case <-resStream:
+			default:
+				isBlocked = true
+			}
+			So(isBlocked, ShouldBeTrue)
+		})
+		Convey("可以通过 done 来抢占", func() {
+			close(done)
+			wg.Wait()
+			//
+			isBlocked, isClosed := false, false
+			select {
+			case _, ok := <-resStream:
+				if !ok {
+					isClosed = true
+				}
+			default:
+				isBlocked = true
+			}
+			So(isBlocked, ShouldBeFalse)
+			So(isClosed, ShouldBeTrue)
+		})
+	})
+
+	Convey("当输出流 resStream 阻塞时，", t, func() {
+		done := make(chan struct{})
+		stream := streamMaker()
+		//
+		var wg2, wg3 sync.WaitGroup
+		hasReceived := false
+		hasCancelled := false
+		wg2.Add(1)
+		wg3.Add(1)
+		stub2 := gostub.Stub(&orDoneStub2, func(ok bool) {
+			hasReceived = ok
+			wg2.Done()
+		})
+		stub3 := gostub.Stub(&orDoneStub3, func() {
+			hasCancelled = true
+			wg3.Done()
+		})
+		defer stub2.Reset()
+		defer stub3.Reset()
+		//
+		resStream := OrDone(done, stream)
+		Convey("可以通过 done 来抢占", func() {
+			wg2.Wait()
+			close(done)
+			wg3.Wait()
+			//
+			isBlocked, isClosed := false, false
+			select {
+			case _, ok := <-resStream:
+				if !ok {
+					isClosed = true
+				}
+			default:
+				isBlocked = true
+			}
+			So(hasReceived, ShouldBeTrue)
+			So(hasCancelled, ShouldBeTrue)
+			So(isBlocked, ShouldBeFalse)
+			So(isClosed, ShouldBeTrue)
+			So(<-stream, ShouldEqual, 1)
+		})
+	})
+
 }

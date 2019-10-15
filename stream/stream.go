@@ -96,3 +96,38 @@ func FanIn(
 
 	return resStream
 }
+
+var (
+	orDoneStub1 = func() {}
+	orDoneStub2 = func(bool) {}
+	orDoneStub3 = func() {}
+	orDoneStub4 = func() {}
+)
+
+// OrDone allows the process of reading data from the stream to be interrupted by done.
+func OrDone(done <-chan struct{}, stream <-chan interface{}) <-chan interface{} {
+	resStream := make(chan interface{})
+	go func() {
+		defer close(resStream)
+		for {
+			select {
+			case <-done: // 读取可抢占
+				orDoneStub1()
+				return
+			case val, ok := <-stream:
+				orDoneStub2(ok)
+				if !ok {
+					return
+				}
+				select {
+				case <-done: // 写入可抢占
+					orDoneStub3()
+					return
+				case resStream <- val:
+					orDoneStub4()
+				}
+			}
+		}
+	}()
+	return resStream
+}

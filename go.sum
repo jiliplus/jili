@@ -1,3 +1,9 @@
+github.com/aQuaYi/gostub v1.0.0 h1:cuHV02ruEh52TpneDk84cNQwYqoJ8Jf1i5/57cjblcA=
+github.com/aQuaYi/gostub v1.0.0/go.mod h1:wJgFWi6LAzUkt0kXDRiObnPhSfkwze0aDvRP0o07OLU=
+github.com/aQuaYi/stub v1.0.0 h1:zbRH7eQTEpXqaS4ELG3xKL1tat14QVvez80cp9ui8So=
+github.com/aQuaYi/stub v1.0.0/go.mod h1:diRaf1t6qv/7JMMAnbBT3c1jqZDjDJVP/0EHKBoUWtA=
+github.com/aQuaYi/stub v1.1.0 h1:fGvqcBjpoXTbLdHleuP7MP8mvM8uqozrt5mektoWXAs=
+github.com/aQuaYi/stub v1.1.0/go.mod h1:sOgIGwGIKB/cMM74Y+mqaksy5DHiEdeOz9CwQgxMKLY=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=

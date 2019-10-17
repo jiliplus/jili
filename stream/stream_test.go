@@ -7,8 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/prashantv/gostub"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/aQuaYi/stub"
 )
 
 func TestOr(t *testing.T) {
@@ -224,9 +225,9 @@ func TestOrDone(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		//
-		defer gostub.Stub(&orDoneStub1, func() {
+		defer stub.Var(&orDoneStub1, func() {
 			wg.Done()
-		}).Reset()
+		}).Restore()
 		//
 		resStream := OrDone(done, nil)
 		Convey("输出流应该是阻塞的。", func() {
@@ -265,16 +266,16 @@ func TestOrDone(t *testing.T) {
 		hasCancelled := false
 		wg2.Add(1)
 		wg3.Add(1)
-		stub2 := gostub.Stub(&orDoneStub2, func(ok bool) {
+		stub2 := stub.Var(&orDoneStub2, func(ok bool) {
 			hasReceived = ok
 			wg2.Done()
 		})
-		stub3 := gostub.Stub(&orDoneStub3, func() {
+		stub3 := stub.Var(&orDoneStub3, func() {
 			hasCancelled = true
 			wg3.Done()
 		})
-		defer stub2.Reset()
-		defer stub3.Reset()
+		defer stub2.Restore()
+		defer stub3.Restore()
 		//
 		resStream := OrDone(done, stream)
 		Convey("可以通过 done 来抢占", func() {
@@ -296,6 +297,48 @@ func TestOrDone(t *testing.T) {
 			So(isBlocked, ShouldBeFalse)
 			So(isClosed, ShouldBeTrue)
 			So(<-stream, ShouldEqual, 1)
+		})
+	})
+}
+
+func TestDuplicate(t *testing.T) {
+	Convey("如果存在一个 stream，", t, func() {
+		stream := streamMaker()
+		Convey("复制以后，得到的两个通道，能够收到一样的内容。", func() {
+			out1, out2 := Duplicate(nil, stream)
+			for v1 := range out1 {
+				v2 := <-out2
+				So(v1, ShouldResemble, v2)
+			}
+		})
+	})
+}
+
+func TestBridge(t *testing.T) {
+	Convey("如果 genVals()，会返回 <-chan <-chan interface{}", t, func() {
+		count := 10
+		genVals := func() <-chan <-chan interface{} {
+			resStream := make(chan (<-chan interface{}))
+			go func() {
+				defer close(resStream)
+				for i := 0; i < count; i++ {
+					// FIXME: 把 stream 改成带缓冲的话，会出现 Data Race
+					stream := make(chan interface{})
+					resStream <- stream
+					stream <- i
+					close(stream)
+				}
+			}()
+			return resStream
+		}
+
+		Convey("Bridge 就可以一次把他们读取出来。", func() {
+			i := 0
+			for v := range Bridge(nil, genVals()) {
+				So(v, ShouldEqual, i)
+				i++
+			}
+			So(i, ShouldEqual, count)
 		})
 	})
 

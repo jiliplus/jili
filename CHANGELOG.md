@@ -1,0 +1,12 @@
+# 修改日志
+
+这个项目中，所有需要值得一提的改变，都会在这里罗列出来。
+
+本文的格式基于[如何维护更新日志](https://keepachangelog.com/zh-CN/1.0.0/)，并且这个项目的版本号基于[语义化版本2.0.0](https://semver.org/lang/zh-CN/).
+
+## [最新更改]
+
+<!-- [Unreleased]: https://github.com/aQuaYi/jili/compare/v1.0.0...HEAD -->
+[最新更改]: https://github.com/aQuaYi/jili
+
+<!-- [0.0.2]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2 -->

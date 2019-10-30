@@ -1,6 +1,6 @@
 # 程序化交易框架
 
-<h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67827876-41956580-fb0c-11e9-8ef0-f623bad45f4e.png" alt=""></h1>
+<h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></h1>
 <p align="center">
 <a href="https://www.travis-ci.org/aQuaYi/jili">
   <img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master" />

@@ -27,4 +27,4 @@
 
 ## QQ 群
 
-![QQ群二维码](./jili-qqq.png)
+![QQ群二维码](./qqq.png)

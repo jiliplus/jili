@@ -11,6 +11,9 @@
 <a href="https://golang.google.cn">
   <img src="https://img.shields.io/badge/Golang-1.13+-blue.svg" />
 </a>
+<a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md">
+  <img src="https://img.shields.io/badge/CHAMGE-LOG-informational" />
+</a>
 </p>
 
 - [用例](#%e7%94%a8%e4%be%8b)

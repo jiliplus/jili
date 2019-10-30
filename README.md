@@ -9,10 +9,10 @@
   <img src="https://codecov.io/gh/aQuaYi/jili/branch/master/graph/badge.svg" />
 </a>
 <a href="https://golang.google.cn">
-  <img src="https://img.shields.io/badge/Golang-1.13+-blue.svg" />
+  <img src="https://img.shields.io/badge/Go-1.13+-blue.svg" />
 </a>
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md">
-  <img src="https://img.shields.io/badge/CHAMGE-LOG-informational" />
+  <img src="https://img.shields.io/badge/CHANGE-LOG-blue" />
 </a>
 </p>
 

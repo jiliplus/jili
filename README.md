@@ -27,4 +27,4 @@
 
 ## QQ 群
 
-![QQ群二维码](./qqq.png?raw=true "QQ群二维码")
+![QQ二维码](https://user-images.githubusercontent.com/6028869/67827619-7e149180-fb0b-11e9-8411-ef7d1ff81828.png)

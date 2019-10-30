@@ -2,6 +2,9 @@
 
 <h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></h1>
 <p align="center">
+<a href="https://github.com/aQuaYi/jili/blob/master/LICENSE">
+  <img src="https://img.shields.io/badge/LICENSE-MIT-blue.svg" />
+</a>
 <a href="https://www.travis-ci.org/aQuaYi/jili">
   <img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master" />
 </a>

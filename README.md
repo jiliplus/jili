@@ -1,6 +1,6 @@
-#
-
-<h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt="">jili 程序化交易软件</h1>
+<!-- markdownlint-disable MD041 -->
+<p align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></p>
+<h1 align="center">jili 程序化交易软件</h1>
 <p align="center">
 <a href="https://www.travis-ci.org/aQuaYi/jili">
   <img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master" />

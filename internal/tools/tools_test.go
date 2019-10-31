@@ -1,4 +1,4 @@
-package jili
+package tools
 
 import (
 	"testing"

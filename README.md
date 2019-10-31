@@ -2,9 +2,6 @@
 
 <h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></h1>
 <p align="center">
-<a href="https://github.com/aQuaYi/jili/blob/master/LICENSE">
-  <img src="https://img.shields.io/badge/LICENSE-MIT-blue.svg" />
-</a>
 <a href="https://www.travis-ci.org/aQuaYi/jili">
   <img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master" />
 </a>
@@ -13,6 +10,9 @@
 </a>
 <a href="https://golang.google.cn">
   <img src="https://img.shields.io/badge/Go-1.13+-blue.svg" />
+</a>
+<a href="https://github.com/aQuaYi/jili/blob/master/LICENSE">
+  <img src="https://img.shields.io/badge/LICENSE-MIT-blue.svg" />
 </a>
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md">
   <img src="https://img.shields.io/badge/CHANGE-LOG-blue" />
@@ -29,7 +29,7 @@
 
 ## 项目名称的含义
 
-**jili** 是【激励】，也是【极】大【力】量，还是【极】高【润】，最重要的是图个【**吉利**】。
+**jili** 是【激励】，也是【极】大【力】量，还是【极】高【利】润，最重要的是图个【**吉利**】。
 
 ## QQ 群
 

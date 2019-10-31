@@ -1,6 +1,6 @@
-# jili 程序化交易软件
+#
 
-<h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></h1>
+<h1 align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt="">jili 程序化交易软件</h1>
 <p align="center">
 <a href="https://www.travis-ci.org/aQuaYi/jili">
   <img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master" />
@@ -12,10 +12,10 @@
   <img src="https://img.shields.io/badge/Go-1.13+-blue.svg"/>
 </a>
 <a href="https://github.com/aQuaYi/jili/blob/master/LICENSE">
-  <img src="https://img.shields.io/badge/LICENSE-MIT-blue.svg"/>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg"/>
 </a>
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md">
-  <img src="https://img.shields.io/badge/CHANGE-LOG-blue.svg"/>
+  <img src="https://img.shields.io/badge/Change-Log-blue.svg"/>
 </a>
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=7f61280435c41608fb8cb96cf8af7d31ef0007c44b223c9e3596ce84dec329bc"><img border="0" src="https://img.shields.io/badge/QQ%20群-23530093-blue.svg" alt="jili 交流群" title="jili 交流群"></a>
 </p>

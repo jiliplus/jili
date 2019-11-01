@@ -38,11 +38,8 @@
 </a>
 
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md">
-  <img src="https://img.shields.io/badge/Change-Log-blue.svg" alt="Change Log" title="Change Log"/>
-</a>
-
-<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=7f61280435c41608fb8cb96cf8af7d31ef0007c44b223c9e3596ce84dec329bc"><img border="0" src="https://img.shields.io/badge/QQ%20群-23%2053%2000%2093-blue.svg" alt="jili 交流群" title="jili 交流群">
-</a>
+  <img src="https://img.shields.io/badge/Change-Log-blue.svg" alt="Change Log" title="Change Log"/></a>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=7f61280435c41608fb8cb96cf8af7d31ef0007c44b223c9e3596ce84dec329bc"><img border="0" src="https://img.shields.io/badge/QQ%20群-23%2053%2000%2093-blue.svg" alt="jili 交流群" title="jili 交流群"></a>
 
 </p>
 

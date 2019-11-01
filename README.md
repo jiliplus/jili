@@ -21,11 +21,16 @@
 </p>
 
 - [用例](#%e7%94%a8%e4%be%8b)
+- [项目参考](#%e9%a1%b9%e7%9b%ae%e5%8f%82%e8%80%83)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
 
 ## 用例
 
 为了更好地开发这个项目，我编写了[用例](UseCase)。
+
+## 项目参考
+
+- [Standard Go Project Layout](https://github.com/golang-standards/project-layout) 和 [golang开发目录结构](https://segmentfault.com/a/1190000012926524)
 
 ## 项目名称的含义
 

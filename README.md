@@ -21,8 +21,7 @@
   <img src="https://img.shields.io/badge/godoc-reference-blue.svg" alt="Go Doc" title="Go Doc"/>
 </a>
 
-<a href="https://github.com/aQuaYi/jili/releases/latest">
-  <img src="https://img.shields.io/github/release/aQuaYi/jili.svg" alt="Release" title="Release"/>
+<a href="https://github.com/aQuaYi/jili/releases"> <img alt="GitHub release (latest SemVer including pre-releases)" src="https://img.shields.io/github/v/release/aQuaYi/jili?include_prereleases" title="Release">
 </a>
 
 </p>

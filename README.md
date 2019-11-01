@@ -14,15 +14,15 @@
 </a>
 
 <a href="https://goreportcard.com/report/github.com/aQuaYi/jili">
-  <img src="https://goreportcard.com/badge/github.com/aQuaYi/jili?style=flat-square" alt="Go Report Card" title="Go Report Card"/>
+  <img src="https://goreportcard.com/badge/github.com/aQuaYi/jili" alt="Go Report Card" title="Go Report Card"/>
 </a>
 
 <a href="http://godoc.org/github.com/aQuaYi/jili">
-  <img src="https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square" alt="Go Doc" title="Go Doc"/>
+  <img src="https://img.shields.io/badge/godoc-reference-blue.svg" alt="Go Doc" title="Go Doc"/>
 </a>
 
 <a href="https://github.com/aQuaYi/jili/releases/latest">
-  <img src="https://img.shields.io/github/release/aQuaYi/jili.svg?style=flat-square" alt="Release" title="Release"/>
+  <img src="https://img.shields.io/github/release/aQuaYi/jili.svg" alt="Release" title="Release"/>
 </a>
 
 </p>

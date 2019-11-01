@@ -4,8 +4,11 @@
 		"Pippi",
 		"Zien",
 		"codecov",
+		"confd",
+		"consule",
 		"devs",
 		"dones",
+		"githooks",
 		"idkey",
 		"jili",
 		"myapp",
@@ -14,6 +17,10 @@
 		"prashantv",
 		"protobuf",
 		"qunwpa",
-		"stretchr"
+		"runit",
+		"stretchr",
+		"supervisord",
+		"systemd",
+		"sysv"
 	]
 }

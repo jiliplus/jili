@@ -7,6 +7,8 @@
 ## [最新更改]
 
 <!-- [Unreleased]: https://github.com/aQuaYi/jili/compare/v1.0.0...HEAD -->
-[最新更改]: https://github.com/aQuaYi/jili
 
-<!-- [0.0.2]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2 -->
+## [0.0.1]
+
+[最新更改]: https://github.com/aQuaYi/jili
+[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.0...v0.0.1

@@ -1,3 +1,8 @@
-# api 目录
+# `/api`
 
-协议文件，Swagger/thrift/protobuf 等
+OpenAPI/Swagger specs, JSON schema files, protocol definition files.
+
+Examples:
+
+* https://github.com/kubernetes/kubernetes/tree/master/api
+* https://github.com/openshift/origin/tree/master/api

@@ -1,3 +1,5 @@
-# configs 目录
+# `/configs`
 
-存放配置文件
+Configuration file templates or default configs.
+
+Put your `confd` or `consule-template` template files here.

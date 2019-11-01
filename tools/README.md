@@ -1,3 +1,9 @@
-# tools 目录
+# `/tools`
 
-常用的工具和脚本，可以引用 /internal 或者 /pkg 里面的库
+Supporting tools for this project. Note that these tools can import code from the `/pkg` and `/internal` directories.
+
+Examples:
+
+* https://github.com/istio/istio/tree/master/tools
+* https://github.com/openshift/origin/tree/master/tools
+* https://github.com/dapr/dapr/tree/master/tools

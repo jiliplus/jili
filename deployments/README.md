@@ -1,3 +1,3 @@
-# deployments
+# `/deployments`
 
-部署相关的配置文件和模板
+IaaS, PaaS, system and container orchestration deployment configurations and templates (docker-compose, kubernetes/helm, mesos, terraform, bosh).

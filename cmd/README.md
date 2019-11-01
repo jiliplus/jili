@@ -1,5 +1,20 @@
-# cmd 目录
+# `/cmd`
 
-main函数文件（比如 /cmd/my-app.go）目录，这个目录下面，每个文件在编译之后都会生成一个可执行的文件。
+Main applications for this project.
 
-不要把很多的代码放到这个目录下面，这里面的代码尽可能简单。
+The directory name for each application should match the name of the executable you want to have (e.g., `/cmd/myapp`).
+
+Don't put a lot of code in the application directory. If you think the code can be imported and used in other projects, then it should live in the `/pkg` directory. If the code is not reusable or if you don't want others to reuse it, put that code in the `/internal` directory. You'll be surprised what others will do, so be explicit about your intentions!
+
+It's common to have a small `main` function that imports and invokes the code from the `/internal` and `/pkg` directories and nothing else.
+
+Examples:
+
+* https://github.com/heptio/ark/tree/master/cmd (just a really small `main` function with everything else in packages)
+* https://github.com/moby/moby/tree/master/cmd
+* https://github.com/prometheus/prometheus/tree/master/cmd
+* https://github.com/influxdata/influxdb/tree/master/cmd
+* https://github.com/kubernetes/kubernetes/tree/master/cmd
+* https://github.com/satellity/satellity/tree/master/cmd/satellity
+* https://github.com/dapr/dapr/tree/master/cmd
+

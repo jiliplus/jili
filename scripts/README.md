@@ -1,3 +1,11 @@
-# scripts
+# `/scripts`
 
-其他一些脚本，编译、安装、测试、分析等等
+Scripts to perform various build, install, analysis, etc operations.
+
+These scripts keep the root level Makefile small and simple.
+
+Examples:
+
+* https://github.com/kubernetes/helm/tree/master/scripts
+* https://github.com/cockroachdb/cockroach/tree/master/scripts
+* https://github.com/hashicorp/terraform/tree/master/scripts

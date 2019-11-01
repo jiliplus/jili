@@ -1,3 +1,3 @@
-# assets 目录
+# `/assets`
 
-其他一些依赖的静态资源
+Other assets to go along with your repository (images, logos, etc).

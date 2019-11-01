@@ -1,5 +1,11 @@
-# build
+# `/build`
 
-持续集成目录
+Packaging and Continuous Integration.
 
-云 (AMI), 容器 (Docker), 操作系统 (deb, rpm, pkg)等的包配置和脚本放到 /build/package/ 目录
+Put your cloud (AMI), container (Docker), OS (deb, rpm, pkg) package configurations and scripts in the `/build/package` directory.
+
+Put your CI (travis, circle, drone) configurations and scripts in the `/build/ci` directory. Note that some of the CI tools (e.g., Travis CI) are very picky about the location of their config files. Try putting the config files in the `/build/ci` directory linking them to the location where the CI tools expect them when possible (don't worry if it's not and if keeping those files in the root directory makes your life easier :-)).
+
+Examples:
+
+* https://github.com/cockroachdb/cockroach/tree/master/build

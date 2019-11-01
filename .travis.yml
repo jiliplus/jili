@@ -14,7 +14,7 @@ branches:
 script:
   - go get -t -v ./...
   - go vet ./...
-  - bash ./test.sh
+  - bash ./scripts/travis.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

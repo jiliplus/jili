@@ -15,9 +15,7 @@
 <!--  -->
 <a href="https://github.com/aQuaYi/jili/releases"> <img src="https://img.shields.io/github/v/release/aQuaYi/jili?include_prereleases" alt="Release" title="Release"></a>
 <!--  -->
-</p>
-<!--  -->
-<p align="center">
+<br/>
 <!--  -->
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md"><img src="https://img.shields.io/badge/Change-Log-blue.svg" alt="Change Log" title="Change Log"/></a>
 <!--  -->

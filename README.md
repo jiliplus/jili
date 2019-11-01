@@ -25,6 +25,10 @@
   <img src="https://img.shields.io/github/release/aQuaYi/jili.svg?style=flat-square" alt="Release" title="Release"/>
 </a>
 
+</p>
+
+<p align="center">
+
 <a href="https://golang.google.cn">
   <img src="https://img.shields.io/badge/Go-1.13+-blue.svg" alt="Go Version" title="Go Version"/>
 </a>

@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD041 -->
-<p align="center"><img src="https://user-images.githubusercontent.com/6028869/67830383-5f1afd00-fb15-11e9-9cc2-686932341199.png" alt=""></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/6028869/68006564-f1590780-fcb3-11e9-92e9-1b7d78f59e6b.png" alt=""></p>
 <h1 align="center">jili</h1>
 <p align="center">
 <a href="https://www.travis-ci.org/aQuaYi/jili">

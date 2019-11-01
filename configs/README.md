@@ -3,3 +3,5 @@
 Configuration file templates or default configs.
 
 Put your `confd` or `consule-template` template files here.
+
+放入相关应用的配置文件。

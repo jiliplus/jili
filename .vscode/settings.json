@@ -9,8 +9,11 @@
 		"devs",
 		"dones",
 		"githooks",
+		"godoc",
 		"idkey",
 		"jili",
+		"kubernetes",
+		"mesos",
 		"myapp",
 		"myprivlib",
 		"mypubliclib",
@@ -21,6 +24,7 @@
 		"stretchr",
 		"supervisord",
 		"systemd",
-		"sysv"
+		"sysv",
+		"testdata"
 	]
 }

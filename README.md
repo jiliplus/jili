@@ -19,6 +19,8 @@
 <!--  -->
 <a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md"><img src="https://img.shields.io/badge/Change-Log-blue.svg" alt="Change Log" title="Change Log"/></a>
 <!--  -->
+<a href="https://github.com/aQuaYi/jili/blob/master/CHANGELOG.md"><img src="https://img.shields.io/badge/Change-Log-blue.svg" alt="Change Log" title="Change Log"/></a>
+<!--  -->
 <a href="https://golang.google.cn"><img src="https://img.shields.io/badge/Go-1.13+-blue.svg" alt="Go Version" title="Go Version"/></a>
 <!--  -->
 <a href="https://github.com/aQuaYi/jili/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" title="MIT License"/></a>

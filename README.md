@@ -5,6 +5,8 @@
 
 <p align="center">
 <!--  -->
+<a href="https://github.com/aQuaYi/jili/releases"> <img src="https://img.shields.io/github/v/release/aQuaYi/jili?include_prereleases" alt="Release" title="Release"></a>
+<!--  -->
 <a href="https://www.travis-ci.org/aQuaYi/jili"><img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master"/></a>
 <!--  -->
 <a href="https://codecov.io/gh/aQuaYi/jili"><img src="https://codecov.io/gh/aQuaYi/jili/branch/master/graph/badge.svg"/></a>
@@ -12,8 +14,6 @@
 <a href="https://goreportcard.com/report/github.com/aQuaYi/jili"><img src="https://goreportcard.com/badge/github.com/aQuaYi/jili" alt="Go Report Card" title="Go Report Card"/></a>
 <!--  -->
 <a href="http://godoc.org/github.com/aQuaYi/jili"><img src="https://img.shields.io/badge/godoc-reference-blue.svg" alt="Go Doc" title="Go Doc"/></a>
-<!--  -->
-<a href="https://github.com/aQuaYi/jili/releases"> <img src="https://img.shields.io/github/v/release/aQuaYi/jili?include_prereleases" alt="Release" title="Release"></a>
 <!--  -->
 <br/>
 <!--  -->

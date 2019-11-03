@@ -40,11 +40,10 @@
 
 ## 项目参考
 
-- [Standard Go Project Layout](https://github.com/golang-standards/project-layout) 和 [golang开发目录结构](https://segmentfault.com/a/1190000012926524)
 
 ## jili 交流群
 
-![QQ 群](https://user-images.githubusercontent.com/6028869/68080839-5d677700-fe3e-11e9-9e1d-9eeb71e5832c.jpg)
+![jili 交流群](https://user-images.githubusercontent.com/6028869/68080839-5d677700-fe3e-11e9-9e1d-9eeb71e5832c.jpg)
 
 ## 项目名称的含义
 

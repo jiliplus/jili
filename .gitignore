@@ -10,3 +10,12 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# 存放交易所历史交易数据的文件夹，具体内容放在了百度网盘。
+#
+# 保留 TransactionRecords 文件夹
+!TransactionRecords
+# 排除 TransactionRecords 内的所有文件内容
+/TransactionRecords/*
+# 但是保留 TransactionRecords/README.md
+!TransactionRecords/README.md

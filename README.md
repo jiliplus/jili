@@ -31,6 +31,7 @@
 
 - [用例](#%e7%94%a8%e4%be%8b)
 - [项目参考](#%e9%a1%b9%e7%9b%ae%e5%8f%82%e8%80%83)
+- [jili 交流群](#jili-%e4%ba%a4%e6%b5%81%e7%be%a4)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
 
 ## 用例
@@ -40,6 +41,10 @@
 ## 项目参考
 
 - [Standard Go Project Layout](https://github.com/golang-standards/project-layout) 和 [golang开发目录结构](https://segmentfault.com/a/1190000012926524)
+
+## jili 交流群
+
+![QQ 群](https://user-images.githubusercontent.com/6028869/68080839-5d677700-fe3e-11e9-9e1d-9eeb71e5832c.jpg)
 
 ## 项目名称的含义
 

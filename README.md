@@ -45,7 +45,12 @@
 ## jili 交流群
 
 ![jili 交流群](https://user-images.githubusercontent.com/6028869/68080839-5d677700-fe3e-11e9-9e1d-9eeb71e5832c.jpg)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FaQuaYi%2Fjili.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FaQuaYi%2Fjili?ref=badge_shield)
 
 ## 项目名称的含义
 
 **jili** 是**激励**，也是**极**大**力**量，还是**极**高**利**润，最重要的是图个**吉利**。
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FaQuaYi%2Fjili.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FaQuaYi%2Fjili?ref=badge_large)

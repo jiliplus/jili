@@ -8,5 +8,15 @@
 				"label": ""
 			}
 		]
+	},
+	{
+		"path": "$ROOTPATH$/docs/CHANGELOG.md",
+		"bookmarks": [
+			{
+				"line": 6,
+				"column": 8,
+				"label": ""
+			}
+		]
 	}
 ]

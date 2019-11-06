@@ -6,6 +6,10 @@
 
 ## [最新更改]
 
+ADD:
+
+- 添加了 `tools.IsExist` 函数，判断文件是否存在
+
 <!-- [Unreleased]: https://github.com/aQuaYi/jili/compare/v1.0.0...HEAD -->
 
 ## [0.0.1]

@@ -19,3 +19,6 @@
 /TransactionRecords/*
 # 但是保留 TransactionRecords/README.md
 !TransactionRecords/README.md
+
+# 交易所的配置文件使用 toml 格式
+*.toml

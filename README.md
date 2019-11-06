@@ -33,6 +33,7 @@
 - [用例](#%e7%94%a8%e4%be%8b)
 - [jili 交流群](#jili-%e4%ba%a4%e6%b5%81%e7%be%a4)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
+- [License](#license)
 
 ## 本周开发计划
 
@@ -49,3 +50,6 @@
 ## 项目名称的含义
 
 **jili** 是**激励**，也是**极**大**力**量，还是**极**高**利**润，最重要的是图个**吉利**。
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FaQuaYi%2Fjili.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FaQuaYi%2Fjili?ref=badge_large)

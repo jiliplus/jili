@@ -3,7 +3,7 @@ package binancecollector
 import (
 	"context"
 	"fmt"
-	"log"
+	"time"
 
 	"github.com/adshao/go-binance"
 	"github.com/pelletier/go-toml"
@@ -13,19 +13,21 @@ const (
 	configFile = "binance.toml"
 )
 
-func run() {
-	tree, err := toml.LoadFile(configFile)
+// Run a binance client to collect historical trades
+func Run() {
+	config, err := toml.LoadFile(configFile)
 	if err != nil {
 		msg := fmt.Sprintf("无法导入 %s，%s", configFile, err)
 		panic(msg)
 	}
-	client := binance.NewClient(
-		tree.GetPosition("APIkey").String(),
-		tree.GetPosition("SecretKey").String())
-	res, err := client.NewHistoricalTradesService().Symbol("BNBETH").FromID(0).Limit(1000).Do(context.TODO())
+	a, s := config.Get("APIKey").(string), config.Get("SecretKey").(string)
+	fmt.Printf("APIKey   : %s\n", a)
+	fmt.Printf("SecretKey: %s\n", s)
+	client := binance.NewClient(a, s)
+	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
 	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println(res)
+		fmt.Println(err)
 	}
+	r := res[0]
+	fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
 }

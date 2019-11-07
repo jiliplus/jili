@@ -2,6 +2,12 @@
 
 在这里记录我开发这个项目的点点滴滴。
 
+## 2019-11-07
+
+获取了 "ETHBTC" 的第一条交易记录的时间
+
+> 0,1500004804757,2017-07-14 12:00:04.757 +0800 CST
+
 ## 2019-11-06
 
 在粗略地浏览了 [GoEx](https://github.com/nntaoli-project/GoEx) 和 [go-binance](https://github.com/adshao/go-binance) 后。我还是决定自己写交易所 `API` 的封装。

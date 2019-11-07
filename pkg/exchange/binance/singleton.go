@@ -32,7 +32,12 @@ func New() *Client {
 		exit()
 	}
 	once.Do(func() {
-		instance = &Client{}
+		tree, _ := toml.LoadFile(ConfigFile)
+		err := tree.Unmarshal(instance)
+		if err != nil {
+			msg := fmt.Sprintf("读取 %s 文件错误，请核查。", ConfigFile)
+			panic(msg)
+		}
 	})
 	return instance
 }

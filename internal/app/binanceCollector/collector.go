@@ -24,6 +24,7 @@ func Run() {
 	fmt.Printf("APIKey   : %s\n", a)
 	fmt.Printf("SecretKey: %s\n", s)
 	client := binance.NewClient(a, s)
+	// client.BaseURL = "api.binance.co"
 	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
 	if err != nil {
 		fmt.Println(err)

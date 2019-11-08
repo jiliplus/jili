@@ -3,7 +3,6 @@ package db
 
 import (
 	"database/sql"
-	//导入sqlite3的驱动
 )
 
 //DBer 是定制数据库的接口

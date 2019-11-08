@@ -3,6 +3,7 @@ package binancecollector
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/adshao/go-binance"
@@ -24,11 +25,34 @@ func Run() {
 	fmt.Printf("APIKey   : %s\n", a)
 	fmt.Printf("SecretKey: %s\n", s)
 	client := binance.NewClient(a, s)
-	// client.BaseURL = "api.binance.co"
+
+	// 获取历史交易记录
 	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
 	if err != nil {
 		fmt.Println(err)
 	}
 	r := res[0]
 	fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
+
+	// 获取 exchangeInfo 信息
+	info, err := client.NewExchangeInfoService().Do(context.TODO())
+	for _, s := range info.Symbols {
+		fmt.Println(s.Symbol)
+	}
+
+	// NOTICE: 国内的 IP 无法访问 binance 的 API
+
+	// "bi*" 表示获取所有 bi开头的文件名放入 files
+	files, _ := filepath.Glob("bi*")
+	fmt.Println(files)
+
+}
+
+type request struct {
+	symbol string
+	fromID int64
+	limit  int
+	// 获取数据后
+	// res 发送到 resChan
+	resChan chan []*binance.Trade
 }

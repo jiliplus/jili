@@ -1,5 +1,7 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b h1:ETIKydTbnzwNUsIGDBiFl2EURPhMH3NnFHIDsnXc+o4=
+github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b/go.mod h1:5MlpsreROJsVmgQHgk2nse+wA7lKTZWgu21Oat1JWcg=
 github.com/aQuaYi/gostub v1.0.0 h1:cuHV02ruEh52TpneDk84cNQwYqoJ8Jf1i5/57cjblcA=
 github.com/aQuaYi/gostub v1.0.0/go.mod h1:wJgFWi6LAzUkt0kXDRiObnPhSfkwze0aDvRP0o07OLU=
 github.com/aQuaYi/stub v1.0.0 h1:zbRH7eQTEpXqaS4ELG3xKL1tat14QVvez80cp9ui8So=
@@ -20,6 +22,8 @@ github.com/gorilla/websocket v1.4.1 h1:q7AeDBpnBk8AogcD4DSag/Ukw/KV+YhzLj2bP5HvK
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
+github.com/mattn/go-sqlite3 v1.11.0 h1:LDdKkqtYlom37fkvqs8rMPFKAMe8+SgjbwZ6ex1/A/Q=
+github.com/mattn/go-sqlite3 v1.11.0/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=
 github.com/pelletier/go-toml v1.6.0 h1:aetoXYr0Tv7xRU/V4B4IZJ2QcbtMUFoNb3ORp7TzIK4=
 github.com/pelletier/go-toml v1.6.0/go.mod h1:5N711Q9dKgbdkxHL+MEfF31hpT7l0S0s/t2kKREewys=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

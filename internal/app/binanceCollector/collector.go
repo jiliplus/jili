@@ -40,6 +40,8 @@ func Run() {
 		fmt.Println(s.Symbol)
 	}
 
+	fmt.Println("symbol 的数量是 ", len(info.Symbols))
+
 	// NOTICE: 国内的 IP 无法访问 binance 的 API
 
 	// "bi*" 表示获取所有 bi开头的文件名放入 files

@@ -40,6 +40,7 @@ func init() {
 	if err != nil {
 		panic("failed to connect database")
 	}
+	fmt.Printf("%s 数据库已经打开\n", dbName)
 }
 
 // Run a binance client to collect historical trades
@@ -64,13 +65,4 @@ func Run() {
 	files, _ := filepath.Glob("bi*")
 	fmt.Println(files)
 
-}
-
-type request struct {
-	symbol string
-	fromID int64
-	limit  int
-	// 获取数据后
-	// res 发送到 resChan
-	resChan chan []*binance.Trade
 }

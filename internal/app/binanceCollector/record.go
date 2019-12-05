@@ -2,6 +2,8 @@ package binancecollector
 
 import (
 	"container/heap"
+	"log"
+	"time"
 
 	"github.com/aQuaYi/jili/internal/pkg/tools"
 )
@@ -9,13 +11,13 @@ import (
 // record 是 priorityQueue 中的元素
 type record struct {
 	symbol string
-	time   int
-	id     int
+	time   int64
+	id     int64
 	// index 是 record 在 heap 中的索引号
 	index int
 }
 
-func newRecord(symbol string, time, id int) *record {
+func newRecord(symbol string, time, id int64) *record {
 	return &record{
 		symbol: symbol,
 		time:   time,
@@ -49,10 +51,10 @@ func newRecordsFromDB(symbols []string) *records {
 	for _, s := range symbols {
 		tp := newTrade(s)
 		db.Last(tp)
-		if tp.Time == 0 {
+		if tp.UTC == 0 {
 			heap.Push(&res, newRecord(s, 0, -1))
 		} else {
-			heap.Push(&res, newRecord(s, tp.Time, tp.ID))
+			heap.Push(&res, newRecord(s, tp.UTC, tp.ID))
 		}
 	}
 	return &res
@@ -85,13 +87,15 @@ func (rs *records) Pop() interface{} {
 	return temp
 }
 
-func (rs *records) first() (symbol string, id int) {
+func (rs *records) first() (symbol string, id int64) {
 	symbol = (*rs)[0].symbol
 	id = (*rs)[0].id
+	utc := (*rs)[0].time
+	log.Printf("symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
 	return
 }
 
-func (rs *records) update(time, id int) {
+func (rs *records) update(time, id int64) {
 	(*rs)[0].time = time
 	(*rs)[0].id = id
 	heap.Fix(rs, 0)

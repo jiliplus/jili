@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/adshao/go-binance"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pelletier/go-toml"
 )
 
@@ -15,9 +17,13 @@ const (
 	dbName     = "binance.sqlite3"
 )
 
-var client *binance.Client
+var (
+	client *binance.Client
+	db     *gorm.DB
+)
 
 func init() {
+	// initial client
 	config, err := toml.LoadFile(configFile)
 	if err != nil {
 		msg := fmt.Sprintf("无法导入 %s，%s", configFile, err)
@@ -27,10 +33,18 @@ func init() {
 	fmt.Printf("APIKey   : %s\n", a)
 	fmt.Printf("SecretKey: %s\n", s)
 	client = binance.NewClient(a, s)
+	fmt.Println("client 初始化完毕")
+
+	// initial db
+	db, err = gorm.Open("sqlite3", dbName)
+	if err != nil {
+		panic("failed to connect database")
+	}
 }
 
 // Run a binance client to collect historical trades
 func Run() {
+	defer db.Close()
 
 	// 获取历史交易记录
 	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())

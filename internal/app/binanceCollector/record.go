@@ -33,13 +33,27 @@ func newRecords() *records {
 		return brandNewRecords(symbols)
 	}
 
-	return
+	return newRecordsFromDB(symbols)
 }
 
 func brandNewRecords(symbols []string) *records {
 	res := make(records, 0, len(symbols))
 	for _, s := range symbols {
 		heap.Push(&res, newRecord(s, 0, -1))
+	}
+	return &res
+}
+
+func newRecordsFromDB(symbols []string) *records {
+	res := make(records, 0, len(symbols))
+	for _, s := range symbols {
+		tp := newTrade(s)
+		db.Last(tp)
+		if tp.Time == 0 {
+			heap.Push(&res, newRecord(s, 0, -1))
+		} else {
+			heap.Push(&res, newRecord(s, tp.Time, tp.ID))
+		}
 	}
 	return &res
 }

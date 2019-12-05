@@ -12,6 +12,7 @@ import (
 
 const (
 	configFile = "binance.toml"
+	dbName     = "binance.sqlite3"
 )
 
 var client *binance.Client

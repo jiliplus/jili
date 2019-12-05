@@ -5,9 +5,9 @@ import (
 	"log"
 )
 
-func request(symbol string, id int) []*trade {
-	// 获取历史交易记录
-	originals, err := client.NewHistoricalTradesService().Symbol(symbol).FromID(int64(id)).Limit(1000).Do(context.TODO())
+// 获取历史交易记录
+func request(symbol string, id int64) []*trade {
+	originals, err := client.NewHistoricalTradesService().Symbol(symbol).FromID(id).Limit(1000).Do(context.TODO())
 	if err != nil {
 		log.Fatal("client get historycal trades service err:", err)
 	}

@@ -13,8 +13,6 @@ type record struct {
 	symbol string
 	time   int64
 	id     int64
-	// index 是 record 在 heap 中的索引号
-	index int
 }
 
 func newRecord(symbol string, time, id int64) *record {
@@ -68,21 +66,17 @@ func (rs records) Less(i, j int) bool {
 
 func (rs records) Swap(i, j int) {
 	rs[i], rs[j] = rs[j], rs[i]
-	rs[i].index = i
-	rs[j].index = j
 }
 
 // Push 往 rs 中放 record
 func (rs *records) Push(x interface{}) {
 	temp := x.(*record)
-	temp.index = len(*rs)
 	*rs = append(*rs, temp)
 }
 
 // Pop 从 rs 中取出最优先的 record
 func (rs *records) Pop() interface{} {
 	temp := (*rs)[len(*rs)-1]
-	temp.index = -1 // for safety
 	*rs = (*rs)[0 : len(*rs)-1]
 	return temp
 }
@@ -91,7 +85,7 @@ func (rs *records) first() (symbol string, id int64) {
 	symbol = (*rs)[0].symbol
 	id = (*rs)[0].id
 	utc := (*rs)[0].time
-	log.Printf("symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
+	log.Printf("the first symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
 	return
 }
 

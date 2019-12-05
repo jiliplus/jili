@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b
 	github.com/aQuaYi/stub v1.1.0
-	github.com/adshao/go-binance v0.0.0-20190826155308-2f14b48b64cb
+	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/jinzhu/gorm v1.9.11

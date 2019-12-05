@@ -14,8 +14,9 @@ const (
 	configFile = "binance.toml"
 )
 
-// Run a binance client to collect historical trades
-func Run() {
+var client *binance.Client
+
+func init() {
 	config, err := toml.LoadFile(configFile)
 	if err != nil {
 		msg := fmt.Sprintf("无法导入 %s，%s", configFile, err)
@@ -24,7 +25,11 @@ func Run() {
 	a, s := config.Get("APIKey").(string), config.Get("SecretKey").(string)
 	fmt.Printf("APIKey   : %s\n", a)
 	fmt.Printf("SecretKey: %s\n", s)
-	client := binance.NewClient(a, s)
+	client = binance.NewClient(a, s)
+}
+
+// Run a binance client to collect historical trades
+func Run() {
 
 	// 获取历史交易记录
 	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
@@ -34,13 +39,9 @@ func Run() {
 	r := res[0]
 	fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
 
-	// 获取 exchangeInfo 信息
-	info, err := client.NewExchangeInfoService().Do(context.TODO())
-	for _, s := range info.Symbols {
-		fmt.Println(s.Symbol)
+	for _, s := range allSymbols() {
+		fmt.Println(s)
 	}
-
-	fmt.Println("symbol 的数量是 ", len(info.Symbols))
 
 	// NOTICE: 国内的 IP 无法访问 binance 的 API
 

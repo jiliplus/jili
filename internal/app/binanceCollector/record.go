@@ -34,7 +34,7 @@ func newRecords() *records {
 			heap.Push(&res, newRecord(s, tp.UTC, tp.ID))
 		} else {
 			db.CreateTable(tp)
-			heap.Push(&res, newRecord(s, 0, -1))
+			heap.Push(&res, newRecord(s, 0, 0))
 		}
 	}
 	return &res

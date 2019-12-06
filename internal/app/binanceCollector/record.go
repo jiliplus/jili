@@ -11,14 +11,14 @@ import (
 // record 是 priorityQueue 中的元素
 type record struct {
 	symbol string
-	time   int64
+	utc    int64
 	id     int64
 }
 
-func newRecord(symbol string, time, id int64) *record {
+func newRecord(symbol string, utc, id int64) *record {
 	return &record{
 		symbol: symbol,
-		time:   time,
+		utc:    utc,
 		id:     id,
 	}
 }
@@ -61,7 +61,7 @@ func newRecordsFromDB(symbols []string) *records {
 func (rs records) Len() int { return len(rs) }
 
 func (rs records) Less(i, j int) bool {
-	return rs[i].time < rs[j].time
+	return rs[i].utc < rs[j].utc
 }
 
 func (rs records) Swap(i, j int) {
@@ -84,13 +84,13 @@ func (rs *records) Pop() interface{} {
 func (rs *records) first() (symbol string, id int64) {
 	symbol = (*rs)[0].symbol
 	id = (*rs)[0].id
-	utc := (*rs)[0].time
+	utc := (*rs)[0].utc
 	log.Printf("the first symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
 	return
 }
 
 func (rs *records) update(time, id int64) {
-	(*rs)[0].time = time
+	(*rs)[0].utc = time
 	(*rs)[0].id = id
 	heap.Fix(rs, 0)
 }

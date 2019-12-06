@@ -16,6 +16,7 @@
 		"gitignore",
 		"godoc",
 		"gorm",
+		"gormbulk",
 		"idkey",
 		"jili",
 		"jinzhu",

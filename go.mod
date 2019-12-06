@@ -14,6 +14,7 @@ require (
 	github.com/pelletier/go-toml v1.6.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/stretchr/testify v1.4.0
+	github.com/t-tiger/gorm-bulk-insert v1.2.0
 )
 
 replace github.com/aQuaYi/jili/internal => ../internal

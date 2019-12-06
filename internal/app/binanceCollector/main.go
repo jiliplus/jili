@@ -61,7 +61,6 @@ func Run() {
 
 		rs.update(utc, id)
 
-		time.Sleep(time.Millisecond * 100)
 	}
 
 	// // 获取历史交易记录

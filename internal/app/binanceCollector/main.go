@@ -2,6 +2,7 @@ package binancecollector
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/adshao/go-binance"
@@ -55,6 +56,8 @@ func Run() {
 
 		last := len(data) - 1
 		utc, id := data[last].UTC, data[last].ID
+
+		log.Printf("%s %s", symbol, time.Unix(0, utc*1000000))
 
 		rs.update(utc, id)
 

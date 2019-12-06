@@ -4,8 +4,6 @@ import (
 	"container/heap"
 	"log"
 	"time"
-
-	"github.com/aQuaYi/jili/internal/pkg/tools"
 )
 
 // record 是 priorityQueue 中的元素
@@ -28,31 +26,15 @@ type records []*record
 
 func newRecords() *records {
 	symbols := allSymbols()
-
-	if !tools.IsExist(dbName) {
-		return brandNewRecords(symbols)
-	}
-
-	return newRecordsFromDB(symbols)
-}
-
-func brandNewRecords(symbols []string) *records {
-	res := make(records, 0, len(symbols))
-	for _, s := range symbols {
-		heap.Push(&res, newRecord(s, 0, -1))
-	}
-	return &res
-}
-
-func newRecordsFromDB(symbols []string) *records {
 	res := make(records, 0, len(symbols))
 	for _, s := range symbols {
 		tp := newTrade(s)
-		db.Last(tp)
-		if tp.UTC == 0 {
-			heap.Push(&res, newRecord(s, 0, -1))
-		} else {
+		if db.HasTable(tp) {
+			db.Last(tp)
 			heap.Push(&res, newRecord(s, tp.UTC, tp.ID))
+		} else {
+			db.CreateTable(tp)
+			heap.Push(&res, newRecord(s, 0, -1))
 		}
 	}
 	return &res

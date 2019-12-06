@@ -1,9 +1,7 @@
 package binancecollector
 
 import (
-	"context"
 	"fmt"
-	"path/filepath"
 	"time"
 
 	"github.com/adshao/go-binance"
@@ -44,25 +42,39 @@ func init() {
 }
 
 // Run a binance client to collect historical trades
+// NOTICE: 国内的 IP 无法访问 binance 的 API
 func Run() {
 	defer db.Close()
 
-	// 获取历史交易记录
-	res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
-	if err != nil {
-		fmt.Println(err)
+	rs := newRecords()
+
+	for !rs.isUpdated() {
+		symbol, id := rs.first()
+		data := request(symbol, id+1)
+		save(data)
+
+		last := len(data) - 1
+		utc, id := data[last].UTC, data[last].ID
+
+		rs.update(utc, id)
+
+		time.Sleep(time.Millisecond * 100)
 	}
-	r := res[0]
-	fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
 
-	for _, s := range allSymbols() {
-		fmt.Println(s)
-	}
+	// // 获取历史交易记录
+	// res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// r := res[0]
+	// fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
 
-	// NOTICE: 国内的 IP 无法访问 binance 的 API
+	// // "bi*" 表示获取所有 bi开头的文件名放入 files
+	// files, _ := filepath.Glob("bi*")
+	// fmt.Println(files)
 
-	// "bi*" 表示获取所有 bi开头的文件名放入 files
-	files, _ := filepath.Glob("bi*")
-	fmt.Println(files)
+	// tp := newTrade("ETHRUB")
+	// db.Last(tp)
+	// fmt.Println(*tp)
 
 }

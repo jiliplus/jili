@@ -89,8 +89,13 @@ func (rs *records) first() (symbol string, id int64) {
 	return
 }
 
-func (rs *records) update(time, id int64) {
-	(*rs)[0].utc = time
+func (rs *records) update(utc, id int64) {
+	(*rs)[0].utc = utc
 	(*rs)[0].id = id
 	heap.Fix(rs, 0)
+}
+
+func (rs *records) isUpdated() bool {
+	latest := time.Unix(0, 1000000*(*rs)[0].utc)
+	return time.Minute*3 > time.Since(latest)
 }

@@ -59,22 +59,25 @@ func Run() {
 	var day int
 
 	for !rs.isUpdated() {
-		symbol, id := rs.first()
+		symbol, utc, id := rs.first()
+
+		if day != dayOf(utc) {
+			day = dayOf(utc)
+			date := time.Unix(0, utc*1000000)
+			msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
+			bc.Info(msg)
+		}
+
 		data := request(symbol, id+1)
 		save(data)
 
 		last := len(data) - 1
-		utc, id := data[last].UTC, data[last].ID
+		utc, id = data[last].UTC, data[last].ID
 
 		rs.update(utc, id)
 
 		date := time.Unix(0, utc*1000000)
 		log.Printf("%s %s", symbol, date)
-		if date.Day() != day {
-			day = date.Day()
-			msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
-			bc.Info(msg)
-		}
 	}
 
 	// // 获取历史交易记录
@@ -93,4 +96,8 @@ func Run() {
 	// db.Last(tp)
 	// fmt.Println(*tp)
 
+}
+
+func dayOf(utc int64) int {
+	return time.Unix(0, utc*1000000).Day()
 }

@@ -3,6 +3,7 @@ package binancecollector
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/adshao/go-binance"
@@ -16,6 +17,7 @@ func request(symbol string, id int64) []*trade {
 	for err != nil {
 		msg := fmt.Sprintf("client get historycal trades service err: %s", err)
 		bc.Fatal(msg)
+		log.Println(msg)
 		time.Sleep(time.Minute * 3)
 		originals, err = client.NewHistoricalTradesService().Symbol(symbol).FromID(id).Limit(1000).Do(context.TODO())
 	}

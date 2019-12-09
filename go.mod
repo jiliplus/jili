@@ -7,6 +7,7 @@ require (
 	github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b
 	github.com/aQuaYi/stub v1.1.0
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
+	github.com/bearyinnovative/bearychat-go v0.0.0-20181102104846-62b68108f845
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/jinzhu/gorm v1.9.11

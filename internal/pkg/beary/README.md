@@ -6,4 +6,4 @@
 2. Debug   #0C50A3
 3. Info    #80C31C
 4. Warning #FFBF01
-5. Error   #FF4401
+5. Fatal   #FF4401

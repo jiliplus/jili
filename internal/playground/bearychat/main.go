@@ -1,19 +1,19 @@
 package main
 
-import (
-	"net/http"
+import "github.com/aQuaYi/jili/internal/pkg/beary"
 
-	"github.com/bearyinnovative/bearychat-go"
-)
+import "time"
 
 func main() {
-	m := bearychat.Incoming{
-		Text:         "Hello, **BearyChat**",
-		Markdown:     true,
-		Notification: "Hello, BearyChat in Notification",
-	}
+	c := beary.NewChannel()
 
-	output, _ := m.Build()
-
-	http.Post("https://hook.bearychat.com/=bwGvD/incoming/98272d49d0be2614b69670977be7403e", "application/json", output)
+	c.Verbose("verbose")
+	time.Sleep(time.Millisecond * 321)
+	c.Debug("Debug")
+	time.Sleep(time.Millisecond * 321)
+	c.Info("Info")
+	time.Sleep(time.Millisecond * 321)
+	c.Warning("Warning")
+	time.Sleep(time.Millisecond * 321)
+	c.Fatal("Fatal")
 }

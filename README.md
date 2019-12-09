@@ -30,18 +30,22 @@
 </p>
 
 - [本周开发计划](#%e6%9c%ac%e5%91%a8%e5%bc%80%e5%8f%91%e8%ae%a1%e5%88%92)
-- [用例](#%e7%94%a8%e4%be%8b)
+- [功能](#%e5%8a%9f%e8%83%bd)
+	- [命令](#%e5%91%bd%e4%bb%a4)
 - [jili 交流群](#jili-%e4%ba%a4%e6%b5%81%e7%be%a4)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
 - [License](#license)
 
 ## 本周开发计划
 
-- [ ] 从几大交易所中，选一个出来，开始收集历史交易数据。
+- [ ] 提供基于 BearyChat 的通知方法。
+- [ ] 编写回测架构
 
-## 用例
+## 功能
 
-为了更好地开发这个项目，我编写了[用例](UseCase)。
+### [命令](cmd)
+
+- [收集 Binance 交易所的全部交易数据](cmd/binanceCollector/README.md)
 
 ## jili 交流群
 
@@ -52,4 +56,5 @@
 **jili** 是**激励**，也是**极**大**力**量，还是**极**高**利**润，最重要的是图个**吉利**。
 
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FaQuaYi%2Fjili.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FaQuaYi%2Fjili?ref=badge_large)

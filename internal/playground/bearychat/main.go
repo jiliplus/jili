@@ -7,7 +7,7 @@ import "time"
 func main() {
 	c := beary.NewChannel()
 
-	c.Verbose("verbose")
+	c.Verbose("Verbose")
 	time.Sleep(time.Millisecond * 321)
 	c.Debug("Debug")
 	time.Sleep(time.Millisecond * 321)

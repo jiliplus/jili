@@ -14,7 +14,6 @@ func allSymbols() []string {
 		log.Fatal("Binance NewExchangeInfoService err:", err)
 	}
 	for _, s := range info.Symbols {
-		fmt.Println(s.Symbol)
 		res = append(res, s.Symbol)
 	}
 

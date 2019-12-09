@@ -9,6 +9,8 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pelletier/go-toml"
+
+	"github.com/aQuaYi/jili/internal/pkg/beary"
 )
 
 const (
@@ -19,6 +21,7 @@ const (
 var (
 	client *binance.Client
 	db     *gorm.DB
+	bc     *beary.Channel
 )
 
 func init() {
@@ -40,6 +43,10 @@ func init() {
 		panic("failed to connect database")
 	}
 	fmt.Printf("%s 数据库已经打开\n", dbName)
+
+	// initail bearychat
+	bc = beary.NewChannel()
+	bc.Info("Binance Collector 启动了")
 }
 
 // Run a binance client to collect historical trades
@@ -49,6 +56,8 @@ func Run() {
 
 	rs := newRecords()
 
+	var day int
+
 	for !rs.isUpdated() {
 		symbol, id := rs.first()
 		data := request(symbol, id+1)
@@ -57,10 +66,15 @@ func Run() {
 		last := len(data) - 1
 		utc, id := data[last].UTC, data[last].ID
 
-		log.Printf("%s %s", symbol, time.Unix(0, utc*1000000))
-
 		rs.update(utc, id)
 
+		date := time.Unix(0, utc*1000000)
+		log.Printf("%s %s", symbol, date)
+		if date.Day() != day {
+			day = date.Day()
+			msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
+			bc.Info(msg)
+		}
 	}
 
 	// // 获取历史交易记录

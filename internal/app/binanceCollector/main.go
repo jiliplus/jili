@@ -73,6 +73,7 @@ func Run() {
 	}()
 
 	rs := newRecords()
+	btcusdt := rs.btcusdt()
 
 	var day int
 
@@ -82,17 +83,19 @@ func Run() {
 		// 访问限制是，每分钟 240 次。
 		// 也就是每秒钟 4 次。
 		// 我以 5 秒钟为一个 ticker。
-		// 每 5 秒钟访问系统 18 次。
+		// 每 5 秒钟访问系统 19 次。
 		// 这样，就可以达到最大速度了。
-		for i := 0; i < 18; i++ {
+		for i := 0; i < 19; i++ {
 			go deal(rs)
 		}
 
-		_, utc, _ := rs.first()
+		mu.RLock()
+		utc := btcusdt.utc
+		mu.RUnlock()
 		if day != dayOf(utc) {
 			day = dayOf(utc)
 			date := time.Unix(0, utc*1000000)
-			msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
+			msg := fmt.Sprintf("BTCUSDT 已经收集到了 %s 的数据。", date)
 			bc.Info(msg)
 		}
 

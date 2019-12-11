@@ -24,6 +24,19 @@ func newRecord(symbol string, utc, id int64) *record {
 
 var mu sync.RWMutex
 
+func (rs *records) btcusdt() *record {
+	mu.RLock()
+	var res *record
+	for _, r := range *rs {
+		if r.symbol == "BTCUSDT" {
+			res = r
+			break
+		}
+	}
+	mu.RUnlock()
+	return res
+}
+
 // TODO: 删除此处内容
 func (rs *records) first() (symbol string, utc, id int64) {
 	mu.RLock()

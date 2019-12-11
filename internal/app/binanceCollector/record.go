@@ -24,16 +24,19 @@ func newRecord(symbol string, utc, id int64) *record {
 
 var mu sync.RWMutex
 
-func (rs *records) btcusdt() *record {
+func (rs *records) ethbtc() *record {
 	mu.RLock()
 	var res *record
 	for _, r := range *rs {
-		if r.symbol == "BTCUSDT" {
+		if r.symbol == "ETHBTC" {
 			res = r
 			break
 		}
 	}
 	mu.RUnlock()
+	if res == nil {
+		log.Fatal("没有找到 ETHBTC")
+	}
 	return res
 }
 

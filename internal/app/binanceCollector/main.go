@@ -73,7 +73,7 @@ func Run() {
 	}()
 
 	rs := newRecords()
-	btcusdt := rs.btcusdt()
+	ethbtc := rs.ethbtc()
 
 	var day int
 
@@ -89,13 +89,15 @@ func Run() {
 			go deal(rs)
 		}
 
+		rs.first()
+
 		mu.RLock()
-		utc := btcusdt.utc
+		utc := ethbtc.utc
 		mu.RUnlock()
 		if day != dayOf(utc) {
 			day = dayOf(utc)
 			date := time.Unix(0, utc*1000000)
-			msg := fmt.Sprintf("BTCUSDT 已经收集到了 %s 的数据。", date)
+			msg := fmt.Sprintf("ETHBTC 已经收集到了 %s 的数据。", date)
 			bc.Info(msg)
 		}
 

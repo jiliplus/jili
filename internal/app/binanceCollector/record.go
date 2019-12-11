@@ -3,6 +3,7 @@ package binancecollector
 import (
 	"container/heap"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -19,6 +20,54 @@ func newRecord(symbol string, utc, id int64) *record {
 		utc:    utc,
 		id:     id,
 	}
+}
+
+var mu sync.RWMutex
+
+// TODO: 删除此处内容
+func (rs *records) first() (symbol string, utc, id int64) {
+	mu.RLock()
+	symbol = (*rs)[0].symbol
+	id = (*rs)[0].id
+	utc = (*rs)[0].utc
+	mu.RUnlock()
+	log.Printf("the first symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
+	return
+}
+
+func (rs *records) pop() *record {
+	mu.Lock()
+	res := heap.Pop(rs).(*record)
+	mu.Unlock()
+	return res
+}
+
+func (rs *records) push(r *record) {
+	mu.Lock()
+	heap.Push(rs, r)
+	mu.Unlock()
+}
+
+func (rs *records) update(utc, id int64) {
+	mu.Lock()
+	(*rs)[0].utc = utc
+	(*rs)[0].id = id
+	heap.Fix(rs, 0)
+	mu.Unlock()
+}
+
+func (rs *records) isUpdated() bool {
+	mu.RLock()
+	latest := time.Unix(0, 1000000*(*rs)[0].utc)
+	mu.RUnlock()
+	return isToday(latest)
+}
+
+func isToday(date time.Time) bool {
+	now := time.Now()
+	return date.Year() == now.Year() &&
+		date.Month() == now.Month() &&
+		date.Day() == now.Day()
 }
 
 // records implements heap.Interface and holds entries.
@@ -61,23 +110,4 @@ func (rs *records) Pop() interface{} {
 	temp := (*rs)[len(*rs)-1]
 	*rs = (*rs)[0 : len(*rs)-1]
 	return temp
-}
-
-func (rs *records) first() (symbol string, utc, id int64) {
-	symbol = (*rs)[0].symbol
-	id = (*rs)[0].id
-	utc = (*rs)[0].utc
-	log.Printf("the first symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
-	return
-}
-
-func (rs *records) update(utc, id int64) {
-	(*rs)[0].utc = utc
-	(*rs)[0].id = id
-	heap.Fix(rs, 0)
-}
-
-func (rs *records) isUpdated() bool {
-	latest := time.Unix(0, 1000000*(*rs)[0].utc)
-	return time.Minute*3 > time.Since(latest)
 }

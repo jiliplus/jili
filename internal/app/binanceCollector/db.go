@@ -34,6 +34,7 @@ import (
 // 		log.Fatal("tx.Commit err:", err)
 // 	}
 // }
+//
 
 func save(trades []*trade) {
 	tx := db.Begin()

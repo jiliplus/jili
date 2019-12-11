@@ -47,6 +47,9 @@ func init() {
 	// initail bearychat
 	bc = beary.NewChannel()
 	bc.Info("Binance Collector 启动了")
+
+	// 设置 log 输出的时间格式带微秒
+	log.SetFlags(log.Lmicroseconds)
 }
 
 // Run a binance client to collect historical trades
@@ -69,7 +72,7 @@ func Run() {
 		}
 
 		data := request(symbol, id+1)
-		save(data)
+		go save(data)
 
 		last := len(data) - 1
 		utc, id = data[last].UTC, data[last].ID

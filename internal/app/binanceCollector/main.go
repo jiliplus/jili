@@ -94,24 +94,42 @@ func Run() {
 
 	}
 
-	// // 获取历史交易记录
-	// res, err := client.NewHistoricalTradesService().Symbol("ETHBTC").FromID(0).Limit(1000).Do(context.TODO())
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// r := res[0]
-	// fmt.Printf("%d,%d,%s\n", r.ID, r.Time, time.Unix(0, r.Time*1000000))
-
-	// // "bi*" 表示获取所有 bi开头的文件名放入 files
-	// files, _ := filepath.Glob("bi*")
-	// fmt.Println(files)
-
-	// tp := newTrade("ETHRUB")
-	// db.Last(tp)
-	// fmt.Println(*tp)
-
 }
 
 func dayOf(utc int64) int {
 	return time.Unix(0, utc*1000000).Day()
+}
+
+func deal(symbol string, id int64) {
+	var day int
+	var utc int64
+	var date time.Time
+	ticker := time.NewTicker(time.Second)
+	//
+	for !isToday(date) {
+		trades := request(symbol, id+1)
+		//
+		last := len(trades) - 1
+		utc, id = trades[last].UTC, trades[last].ID
+		//
+		date = time.Unix(0, utc*1000000)
+		if day != date.Day() {
+			day = date.Day()
+			msg := fmt.Sprintf("%s 收集到了 %s 的数据。", symbol, date)
+			bc.Info(msg)
+			log.Printf(msg)
+		}
+		log.Printf("%s %s", symbol, date)
+		// 保存数据
+		save(trades)
+		// 每秒运行
+		<-ticker.C
+	}
+}
+
+func isToday(date time.Time) bool {
+	now := time.Now()
+	return date.Year() == now.Year() &&
+		date.Month() == now.Month() &&
+		date.Day() == now.Day()
 }

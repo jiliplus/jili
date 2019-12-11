@@ -53,4 +53,5 @@ func save(trades []*trade) {
 	if err := tx.Commit().Error; err != nil {
 		log.Fatal("tx.Commit err:", err)
 	}
+	log.Printf("Save %d data\n", len(trades))
 }

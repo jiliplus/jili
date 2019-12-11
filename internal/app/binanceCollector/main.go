@@ -61,26 +61,37 @@ func Run() {
 
 	var day int
 
-	for !rs.isUpdated() {
-		symbol, utc, id := rs.first()
+	done := false
 
-		if day != dayOf(utc) {
-			day = dayOf(utc)
+	for !done {
+		data := make([]*trade, 0, 20*1000)
+		// 一口气获取 20 次，然后统一保存
+		for i := 0; i < 20; i++ {
+			symbol, utc, id := rs.first()
+
+			if day != dayOf(utc) {
+				day = dayOf(utc)
+				date := time.Unix(0, utc*1000000)
+				msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
+				bc.Info(msg)
+			}
+
+			data = append(data, request(symbol, id+1)...)
+
+			last := len(data) - 1
+			utc, id = data[last].UTC, data[last].ID
+
+			rs.update(utc, id)
+
 			date := time.Unix(0, utc*1000000)
-			msg := fmt.Sprintf("已经收集到了 %s 的数据。", date)
-			bc.Info(msg)
+			log.Printf("%s %s", symbol, date)
+
 		}
 
-		data := request(symbol, id+1)
+		done = rs.isUpdated()
+
 		go save(data)
 
-		last := len(data) - 1
-		utc, id = data[last].UTC, data[last].ID
-
-		rs.update(utc, id)
-
-		date := time.Unix(0, utc*1000000)
-		log.Printf("%s %s", symbol, date)
 	}
 
 	// // 获取历史交易记录

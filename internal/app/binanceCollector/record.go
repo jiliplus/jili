@@ -47,7 +47,7 @@ func (rs *records) first() (symbol string, utc, id int64) {
 	id = (*rs)[0].id
 	utc = (*rs)[0].utc
 	mu.RUnlock()
-	log.Printf("the first symbol: %s, ID: %d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
+	log.Printf("the first symbol: %s,\t ID: %12d, Time: %s", symbol, id, time.Unix(0, utc*1000000))
 	return
 }
 

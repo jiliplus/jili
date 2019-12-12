@@ -77,17 +77,13 @@ func Run() {
 
 	var day int
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(275 * time.Millisecond)
 
 	for !rs.isUpdated() {
 		// 访问限制是，每分钟 240 次。
-		// 也就是每秒钟 4 次。
-		// 我以 5 秒钟为一个 ticker。
-		// 每 5 秒钟访问系统 19 次。
-		// 这样，就可以达到最大速度了。
-		for i := 0; i < 19; i++ {
-			go deal(rs)
-		}
+		// 也就是每次的间隔时间为 250 毫秒
+		// 我把 ticker 设置成 275 毫秒
+		go deal(rs)
 
 		rs.first()
 

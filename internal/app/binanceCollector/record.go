@@ -40,7 +40,15 @@ func (rs *records) ethbtc() *record {
 	return res
 }
 
-// TODO: 删除此处内容
+// all 记录了 symbols 的数量
+var all int
+
+func (rs *records) isDelayed() bool {
+	mu.RLock()
+	defer mu.RUnlock()
+	return all-len(*rs) > 12
+}
+
 func (rs *records) first() (symbol string, utc, id int64) {
 	mu.RLock()
 	symbol = (*rs)[0].symbol
@@ -91,6 +99,7 @@ type records []*record
 
 func newRecords() *records {
 	symbols := allSymbols()
+	all = len(symbols)
 	res := make(records, 0, len(symbols))
 	for _, s := range symbols {
 		tp := newTrade(s)

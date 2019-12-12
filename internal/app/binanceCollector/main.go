@@ -77,12 +77,12 @@ func Run() {
 
 	var day int
 
-	ticker := time.NewTicker(275 * time.Millisecond)
+	ticker := time.NewTicker(256 * time.Millisecond)
 
 	for !rs.isUpdated() {
 		// 访问限制是，每分钟 240 次。
 		// 也就是每次的间隔时间为 250 毫秒
-		// 我把 ticker 设置成 275 毫秒
+		// 我把 ticker 设置成 256 毫秒
 		go deal(rs)
 
 		rs.first()
@@ -95,6 +95,7 @@ func Run() {
 			date := time.Unix(0, utc*1000000)
 			msg := fmt.Sprintf("ETHBTC 已经收集到了 %s 的数据。", date)
 			bc.Info(msg)
+			log.Println(msg)
 		}
 
 		<-ticker.C
@@ -103,6 +104,15 @@ func Run() {
 }
 
 func deal(rs *records) {
+	// 由于网络出现了较大延迟
+	// 导致前面还有很多没有处理完的。
+	// 所以，跳过这一次
+	if rs.isDelayed() {
+		msg := "rs 已经 delay 了。所以跳过这一次。"
+		bc.Verbose(msg)
+		log.Println(msg)
+		return
+	}
 	r := rs.pop()
 	symbol, id := r.symbol, r.id
 	trades, err := request2(symbol, id+1)

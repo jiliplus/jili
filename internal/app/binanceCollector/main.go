@@ -109,7 +109,7 @@ func deal(rs *records) {
 	// 所以，跳过这一次
 	if rs.isDelayed() {
 		msg := "rs 已经 delay 了。所以跳过这一次。"
-		bc.Verbose(msg)
+		// bc.Verbose(msg)
 		log.Println(msg)
 		return
 	}

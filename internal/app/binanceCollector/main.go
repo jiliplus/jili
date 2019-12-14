@@ -53,7 +53,7 @@ func init() {
 	log.SetFlags(log.Lmicroseconds)
 
 	// initial tradesChan
-	tradesChan = make(chan []*trade)
+	tradesChan = make(chan []*trade, 30)
 }
 
 // Run a binance client to collect historical trades
@@ -114,11 +114,17 @@ func deal(rs *records) {
 		return
 	}
 	r := rs.pop()
-	symbol, id := r.symbol, r.id
+	symbol, utc, id := r.symbol, r.utc, r.id
 	trades, err := request2(symbol, id+1)
 	if err == nil {
+		size := len(trades)
+		if size == 0 {
+			msg := fmt.Sprintf("%s 从 %s 和 %d 获取的数据长度为 0, 决定不再放回去", symbol, time.Unix(0, utc*1000000), id)
+			bc.Fatal(msg)
+			return
+		}
+		last := size - 1
 		tradesChan <- trades
-		last := len(trades) - 1
 		utc, id := trades[last].UTC, trades[last].ID
 		r.utc, r.id = utc, id
 	} else {

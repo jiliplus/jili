@@ -119,7 +119,10 @@ func deal(rs *records) {
 	if err == nil {
 		size := len(trades)
 		if size == 0 {
-			msg := fmt.Sprintf("%s 从 %s 和 %d 获取的数据长度为 0, 决定不再放回去", symbol, time.Unix(0, utc*1000000), id)
+			mu.Lock()
+			all--
+			mu.Unlock()
+			msg := fmt.Sprintf("%s 从 %s 和 %d 获取的数据长度为 0, 决定不再放回去。all = %d。", symbol, time.Unix(0, utc*1000000), id, all)
 			bc.Fatal(msg)
 			return
 		}

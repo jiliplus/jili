@@ -105,9 +105,11 @@ func newRecords() *records {
 		tp := newTrade(s)
 		if db.HasTable(tp) {
 			db.Last(tp)
+			log.Printf("已经从 %s 的表中获取了 UTC = %s， ID = %d\n", s, time.Unix(0, tp.UTC*1000000), tp.ID)
 			heap.Push(&res, newRecord(s, tp.UTC, tp.ID))
 		} else {
 			db.CreateTable(tp)
+			log.Printf("已经创建 %s 的表。\n", s)
 			heap.Push(&res, newRecord(s, 0, 0))
 		}
 	}

@@ -7,9 +7,9 @@ import (
 )
 
 type records struct {
-	queue *symbolQueue
-	size  int
-	load  int
+	queue  *symbolQueue
+	remain int
+	load   int
 	*sync.RWMutex
 }
 
@@ -17,26 +17,32 @@ type records struct {
 // 我的梯子太烂了，访问 binance 的延迟很高，而且偶尔还会无法访问。
 // load 代表了正在试图访问 binance 的 goroutine 数量。
 // 超过限制后，需要停止访问。
-// 不然的话， binance 会拒绝服务。
+// 不然的话，积压的请求一起涌向 binance 服务器的时候，会被封 IP
 // 建议把 load 设置成 12
 func newRecords(symbols []string, load int) *records {
 	return &records{
-		queue: newSymbolQueue(symbols),
-		size:  len(symbols),
-		load:  load,
+		queue:  newSymbolQueue(symbols),
+		remain: len(symbols),
+		load:   load,
 	}
 }
 
 func (rs *records) isOverload() bool {
 	rs.RLock()
 	defer rs.RUnlock()
-	return rs.size-len(*rs.queue) >= rs.load
+	return rs.remain-len(*rs.queue) > rs.load
+}
+
+func (rs *records) getRemain() int {
+	rs.RLock()
+	defer rs.RUnlock()
+	return rs.remain
 }
 
 func (rs *records) decrement() {
 	rs.Lock()
 	defer rs.Unlock()
-	rs.size--
+	rs.remain--
 }
 
 // symbolRecord 是 priorityQueue 中的元素
@@ -54,12 +60,15 @@ func newSymbolRecord(symbol string, utc, id int64) *symbolRecord {
 	}
 }
 
-func (rs *records) first() symbolRecord {
+func (rs *records) first() *symbolRecord {
 	rs.RLock()
 	defer rs.RUnlock()
+	if len(*rs.queue) == 0 {
+		return nil
+	}
 	r := (*rs.queue)[0]
 	log.Printf("symbol: %s,\t ID: %12d, Time: %s", r.symbol, r.id, localTime(r.utc))
-	return *r
+	return r
 }
 
 func (rs *records) pop() *symbolRecord {
@@ -75,10 +84,10 @@ func (rs *records) push(r *symbolRecord) {
 	rs.Unlock()
 }
 
-func (rs *records) isEmpty() bool {
+func (rs *records) isDone() bool {
 	rs.RLock()
 	defer rs.RUnlock()
-	return len(*rs.queue) == 0
+	return rs.remain == 0
 }
 
 // symbolQueue implements heap.Interface and holds entries.
@@ -91,12 +100,11 @@ func newSymbolQueue(symbols []string) *symbolQueue {
 		if db.HasTable(tp) {
 			db.Last(tp)
 			log.Printf("已经从 %s 的表中获取了 UTC = %s， ID = %d\n", s, localTime(tp.UTC), tp.ID)
-			heap.Push(&res, newSymbolRecord(s, tp.UTC, tp.ID))
 		} else {
 			db.CreateTable(tp)
 			log.Printf("已经创建 %s 的表。\n", s)
-			heap.Push(&res, newSymbolRecord(s, 0, 0))
 		}
+		heap.Push(&res, newSymbolRecord(s, tp.UTC, tp.ID))
 	}
 	return &res
 }

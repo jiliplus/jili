@@ -1,41 +1,13 @@
 package binancecollector
 
 import (
+	"fmt"
 	"log"
+
+	"github.com/jinzhu/gorm"
 )
 
-// func save(trades []*trade) {
-// 	valueStrings := []string{}
-// 	valueArgs := []interface{}{}
-// //
-// 	for _, t := range trades {
-// 		valueStrings = append(valueStrings, "(?, ?, ?,?,?,?)")
-// 		valueArgs = append(valueArgs, t.ID)
-// 		valueArgs = append(valueArgs, t.Price)
-// 		valueArgs = append(valueArgs, t.Quantity)
-// 		valueArgs = append(valueArgs, t.UTC)
-// 		valueArgs = append(valueArgs, t.IsBuyerMaker)
-// 		valueArgs = append(valueArgs, t.IsBestMatch)
-// 	}
-// //
-// 	smt := fmt.Sprintf("INSERT INTO %s (id, price, quantity, utc, is_buyer_maker, is_best_match) VALUES ", trades[0].TableName())
-// 	smt += "%s "
-// //
-// 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
-// //
-// 	tx := db.Begin()
-// //
-// 	if err := tx.Exec(smt, valueArgs...).Error; err != nil {
-// 		tx.Rollback()
-// 		log.Fatal("tx.Exec err:", err)
-// 	}
-// //
-// 	if err := tx.Commit().Error; err != nil {
-// 		log.Fatal("tx.Commit err:", err)
-// 	}
-// }
-//
-
+// TODO: 删除此处内容
 func save(trades []*trade) {
 	tx := db.Begin()
 	defer func() {
@@ -55,4 +27,58 @@ func save(trades []*trade) {
 		log.Fatal("tx.Commit err:", err)
 	}
 	log.Printf("Save %d data\n", len(trades))
+}
+
+func save2(db *gorm.DB, trades []*trade) {
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
+		log.Fatal("save tx err:", err)
+	}
+	for _, t := range trades {
+		if err := tx.Create(t).Error; err != nil {
+			log.Fatal("tx.Create err:", err, t.TableName())
+		}
+	}
+	if err := tx.Commit().Error; err != nil {
+		log.Fatal("tx.Commit err:", err)
+	}
+}
+
+func saveDay(trades []*trade) {
+	if len(trades) == 0 {
+		return
+	}
+	trade := trades[0]
+	fileName := trade.monthDBName()
+	//
+	mDBmu.Lock()
+	db, ok := MDB[fileName]
+	mDBmu.Unlock()
+	//
+	if !ok {
+		// initial db
+		var err error
+		db, err = gorm.Open("sqlite3", fileName)
+		if err != nil {
+			panic("failed to connect database")
+		}
+		//
+		mDBmu.Lock()
+		MDB[fileName] = db
+		mDBmu.Unlock()
+		//
+		fmt.Printf("%s 数据库已经打开\n", fileName)
+	}
+	if !db.HasTable(trade.TableName()) {
+		db = db.CreateTable(trade)
+	}
+	save2(db, trades)
+	msg := fmt.Sprintf("save %d %s into %s", len(trades), trades[0].Symbol, fileName)
+	bc.Info(msg)
+	log.Println(msg)
 }

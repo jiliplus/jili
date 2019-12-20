@@ -1,8 +1,10 @@
 package binancecollector
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/adshao/go-binance"
 )
@@ -16,6 +18,18 @@ type trade struct {
 	IsBuyerMaker bool
 	IsBestMatch  bool
 	Symbol       string `gorm:"-"` // 本字段不会保存到数据库
+}
+
+func (t trade) String() string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("%s ，", t.Symbol))
+	sb.WriteString(fmt.Sprintf("ID: %d", t.ID))
+	sb.WriteString(fmt.Sprintf("价格: %12f", t.Price))
+	sb.WriteString(fmt.Sprintf("数量: %12f", t.Quantity))
+	sb.WriteString(fmt.Sprintf("时间: %s", localTime(t.UTC)))
+	sb.WriteString(fmt.Sprintf("Buyer Maker: %t", t.IsBuyerMaker))
+	sb.WriteString(fmt.Sprintf("Best Match: %t", t.IsBestMatch))
+	return sb.String()
 }
 
 func convert(t *binance.Trade, symbol string) *trade {
@@ -46,4 +60,9 @@ func newTrade(symbol string) *trade {
 
 func (t *trade) TableName() string {
 	return t.Symbol
+}
+
+func (t *trade) monthDBName() string {
+	date := localTime(t.UTC)
+	return fmt.Sprintf("%d%02d.binance.sqlite3", date.Year(), date.Month())
 }

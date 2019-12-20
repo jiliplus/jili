@@ -38,7 +38,10 @@ func Split() {
 
 		tradesChan := saver(symbol)
 
-		limit := 20000
+		// limit 代表了复制数据到内存中的数量
+		// 取决于电脑内存的大小，我的电脑是 8 GB 的内存。
+		// 设置成这么大可以不动用 Swap
+		limit := 1000 * 10000
 		for offset := 0; offset <= count; offset += limit {
 			var trades []*trade
 			db.Table(symbol).Offset(offset).Limit(limit).Scan(&trades)
@@ -50,7 +53,9 @@ func Split() {
 }
 
 func newTmp() []*trade {
-	return make([]*trade, 0, 20*10000)
+	// capacity 代表了一次写入数据库的最大数量
+	capacity := 200 * 10000
+	return make([]*trade, 0, capacity)
 }
 
 func saver(symbol string) chan<- []*trade {
@@ -63,7 +68,7 @@ func saver(symbol string) chan<- []*trade {
 			for _, t := range ts {
 				t.Symbol = symbol
 				date := localTime(t.UTC)
-				if month != date.Month() || len(tmp) == 200000 {
+				if month != date.Month() || len(tmp) == cap(tmp) {
 					month = date.Month()
 					saveDay(tmp)
 					tmp = newTmp()

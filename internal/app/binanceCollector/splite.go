@@ -41,7 +41,7 @@ func Split() {
 		// limit 代表了复制数据到内存中的数量
 		// 取决于电脑内存的大小，我的电脑是 8 GB 的内存。
 		// 设置成这么大可以不动用 Swap
-		limit := 1000 * 10000
+		limit := 500 * 10000
 		for offset := 0; offset <= count; offset += limit {
 			var trades []*trade
 			db.Table(symbol).Offset(offset).Limit(limit).Scan(&trades)
@@ -54,7 +54,7 @@ func Split() {
 
 func newTmp() []*trade {
 	// capacity 代表了一次写入数据库的最大数量
-	capacity := 200 * 10000
+	capacity := 100 * 10000
 	return make([]*trade, 0, capacity)
 }
 

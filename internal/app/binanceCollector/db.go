@@ -50,7 +50,7 @@ func save2(db *gorm.DB, trades []*trade) {
 		}
 	}
 	if err := tx.Commit().Error; err != nil {
-		log.Fatal("tx.Commit err:", err)
+		log.Fatal("save tx.Commit err:", err)
 	}
 }
 

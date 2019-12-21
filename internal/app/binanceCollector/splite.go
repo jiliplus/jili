@@ -60,14 +60,13 @@ func newTmp() []*trade {
 }
 
 func saver(symbol string) chan<- []*trade {
-	tradesChan := make(chan []*trade, 10)
+	tradesChan := make(chan []*trade, 100)
 	month := time.Month(0)
 	tmp := newTmp()
 	go func() {
 		wg.Add(1)
 		for ts := range tradesChan {
 			for _, t := range ts {
-				t.Symbol = symbol
 				date := localTime(t.UTC)
 				if month != date.Month() || len(tmp) == cap(tmp) {
 					month = date.Month()

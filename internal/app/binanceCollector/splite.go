@@ -16,6 +16,7 @@ var wg sync.WaitGroup
 
 // Split db according with month
 func Split() {
+
 	log.Println("In Split now.")
 
 	symbols := allSymbols()
@@ -54,7 +55,7 @@ func Split() {
 
 func newTmp() []*trade {
 	// capacity 代表了一次写入数据库的最大数量
-	capacity := 100 * 10000
+	capacity := 10000
 	return make([]*trade, 0, capacity)
 }
 
@@ -70,13 +71,13 @@ func saver(symbol string) chan<- []*trade {
 				date := localTime(t.UTC)
 				if month != date.Month() || len(tmp) == cap(tmp) {
 					month = date.Month()
-					saveDay(tmp)
+					save2disk(tmp)
 					tmp = newTmp()
 				}
 				tmp = append(tmp, t)
 			}
 		}
-		saveDay(tmp)
+		save2disk(tmp)
 		wg.Done()
 	}()
 	return tradesChan

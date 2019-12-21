@@ -64,5 +64,5 @@ func (t *trade) TableName() string {
 
 func (t *trade) monthDBName() string {
 	date := localTime(t.UTC)
-	return fmt.Sprintf("%d%02d.binance.sqlite3", date.Year(), date.Month())
+	return fmt.Sprintf("../data/%d%02d.binance.sqlite3", date.Year(), date.Month())
 }

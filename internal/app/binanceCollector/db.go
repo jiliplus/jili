@@ -54,7 +54,7 @@ func save2(db *gorm.DB, trades []*trade) {
 	}
 }
 
-func saveDay(trades []*trade) {
+func save2disk(trades []*trade) {
 	if len(trades) == 0 {
 		return
 	}

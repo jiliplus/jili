@@ -3,7 +3,6 @@ package binancecollector
 import (
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/jinzhu/gorm"
 )
@@ -30,11 +29,11 @@ func save(trades []*trade) {
 	log.Printf("Save %d data\n", len(trades))
 }
 
-var sMu sync.Mutex
+// var sMu sync.Mutex
 
 func save2(db *gorm.DB, trades []*trade) {
-	sMu.Lock()
-	defer sMu.Unlock()
+	// sMu.Lock()
+	// defer sMu.Unlock()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -61,9 +60,9 @@ func save2disk(trades []*trade) {
 	trade := trades[0]
 	fileName := trade.monthDBName()
 	//
-	mDBmu.Lock()
+	// mDBmu.Lock()
 	db, ok := MDB[fileName]
-	mDBmu.Unlock()
+	// mDBmu.Unlock()
 	//
 	if !ok {
 		// initial db
@@ -73,16 +72,16 @@ func save2disk(trades []*trade) {
 			panic("failed to connect database")
 		}
 		//
-		mDBmu.Lock()
+		// mDBmu.Lock()
 		MDB[fileName] = db
-		mDBmu.Unlock()
+		// mDBmu.Unlock()
 		//
 		fmt.Printf("%s 数据库已经打开\n", fileName)
 	}
 	if !db.HasTable(trade.TableName()) {
-		sMu.Lock()
+		// sMu.Lock()
 		db = db.CreateTable(trade)
-		sMu.Unlock()
+		// sMu.Unlock()
 	}
 	save2(db, trades)
 	msg := fmt.Sprintf("save %d %s into %s", len(trades), trades[0].Symbol, fileName)

@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func allSymbols() []string {
+func getSymbols() []string {
 	res := make([]string, 0, 1024)
 
 	info, err := client.NewExchangeInfoService().Do(context.TODO())

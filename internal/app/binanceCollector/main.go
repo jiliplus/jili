@@ -30,7 +30,7 @@ func Run() {
 
 	bc.Warning("NOTICE: 国内的 IP 无法访问 binance 的 API")
 
-	rs := newRecords(allSymbols(), 12)
+	rs := newRecords(getSymbols(), 12)
 
 	// 访问限制是，每分钟 240 次。
 	// 也就是每次的间隔时间为 250 毫秒

@@ -18,5 +18,15 @@
 				"label": ""
 			}
 		]
+	},
+	{
+		"path": "$ROOTPATH$/internal/app/binanceCollector/splite.go",
+		"bookmarks": [
+			{
+				"line": 36,
+				"column": 2,
+				"label": ""
+			}
+		]
 	}
 ]

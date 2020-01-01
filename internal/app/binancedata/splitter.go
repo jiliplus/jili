@@ -3,6 +3,7 @@ package binancedata
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -20,6 +21,8 @@ func Split() {
 
 	log.Println("In Split now.")
 
+	initMDB()
+
 	symbols := getSymbols()
 
 	for _, symbol := range symbols {
@@ -30,17 +33,13 @@ func Split() {
 			continue
 		}
 		//
-		msg := fmt.Sprintf("split %s now", symbol)
-		bc.Info(msg)
-		log.Println(msg)
-
-		// db.Table(symbol).Count(&count)
-		msg = fmt.Sprintf("%s 表，一共有 %d 条数据\n", symbol, count(symbol))
+		id := maxID(symbol)
+		msg := fmt.Sprintf("split %s form %d", symbol, id)
 		bc.Info(msg)
 		log.Println(msg)
 
 		tradesChan := saver2(symbol)
-		source(tradesChan, symbol)
+		source(tradesChan, symbol, id)
 		wg.Wait()
 	}
 }
@@ -111,4 +110,36 @@ func count(symbol string) uint {
 	sql := fmt.Sprintf("SELECT COUNT(ROWID) AS count FROM %s", symbol)
 	db.Raw(sql).Scan(&result)
 	return result.Count
+}
+
+func initMDB() {
+	files, err := filepath.Glob("../data/*.binance.sqlite3")
+	if err != nil {
+		log.Println("filepath.Glob err:", err)
+	}
+	fmt.Println(files) // contains a list of all files in the current directory
+
+	for _, f := range files {
+		db, err := gorm.Open("sqlite3", f)
+		if err != nil {
+			panic("failed to connect database")
+		}
+		MDB[f] = db
+		fmt.Printf("%s 数据库已经打开\n", f)
+	}
+}
+
+func maxID(symbol string) int64 {
+	res := int64(0)
+	for _, db := range MDB {
+		if !db.HasTable(symbol) {
+			continue
+		}
+		t := newTrade(symbol)
+		db.Last(t)
+		if res < t.ID {
+			res = t.ID
+		}
+	}
+	return res
 }

@@ -1,8 +1,8 @@
 package binancedata
 
 // source is new try.
-func source(channel chan<- *trade, symbol string) {
-	rows, err := db.Table(symbol).Rows() // (*sql.Rows, error)
+func source(channel chan<- *trade, symbol string, id int64) {
+	rows, err := db.Table(symbol).Where("id > ?", id).Rows() // (*sql.Rows, error)
 	if err != nil {
 		panic(symbol + " db.Table.Rows err: " + err.Error())
 	}

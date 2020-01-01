@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sort"
 )
 
 func getSymbols() []string {
@@ -18,5 +19,8 @@ func getSymbols() []string {
 	}
 
 	fmt.Println("symbol 的数量是 ", len(info.Symbols))
+
+	sort.Strings(res)
+
 	return res
 }

@@ -6,5 +6,5 @@ import (
 
 func main() {
 	// binancecollector.Run()
-	binancecollector.Split()
+	binancecollector.Run()
 }

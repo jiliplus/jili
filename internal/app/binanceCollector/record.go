@@ -10,7 +10,7 @@ type records struct {
 	queue  *symbolQueue
 	remain int
 	load   int
-	*sync.RWMutex
+	sync.RWMutex
 }
 
 // 添加 load 参数是因为

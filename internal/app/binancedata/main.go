@@ -1,4 +1,4 @@
-package binancecollector
+package binancedata
 
 import (
 	"fmt"
@@ -89,15 +89,17 @@ func localTime(UTCInMillionSecond int64) time.Time {
 
 func checkFunc() func(r *symbolRecord) {
 	count := int64(0)
-	seconds := int64(24 * 60 * 60) // seconds of one day
+	// milliseconds of one day
+	// binance api 返回的时间，都是 unix 的毫秒。
+	ms := int64(24 * 60 * 60 * 1000)
 	return func(r *symbolRecord) {
 		if r == nil {
 			return
 		}
-		days := r.utc / seconds
+		days := r.utc / ms
 		if count < days {
 			count = days
-			msg := fmt.Sprintf("%s 已经收集到 %s, ID = %d\n", r.symbol, localTime(r.utc), r.id)
+			msg := fmt.Sprintf("%s 已经收集到 %s, ID = %d", r.symbol, localTime(r.utc), r.id)
 			log.Println(msg)
 			bc.Info(msg)
 		}

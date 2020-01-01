@@ -1,4 +1,4 @@
-package binancecollector
+package binancedata
 
 import (
 	"context"

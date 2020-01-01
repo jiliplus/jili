@@ -1,10 +1,8 @@
 package main
 
-import (
-	binancecollector "github.com/aQuaYi/jili/internal/app/binanceCollector"
-)
+import "github.com/aQuaYi/jili/internal/app/binancedata"
 
 func main() {
 	// binancecollector.Run()
-	binancecollector.Run()
+	binancedata.Run()
 }

@@ -1,4 +1,4 @@
-package binancecollector
+package binancedata
 
 // source is new try.
 func source(channel chan<- *trade, symbol string) {

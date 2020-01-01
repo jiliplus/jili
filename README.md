@@ -45,7 +45,7 @@
 
 ### [命令](cmd)
 
-- [收集 Binance 交易所的全部交易数据](cmd/binanceCollector/README.md)
+- [Binance](cmd/binance/README.md)
 
 ## jili 交流群
 

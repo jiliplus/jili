@@ -73,8 +73,11 @@ func (rs *records) first() *symbolRecord {
 
 func (rs *records) pop() *symbolRecord {
 	rs.Lock()
+	defer rs.Unlock()
+	if len(*rs.queue) == 0 {
+		return nil
+	}
 	res := heap.Pop(rs.queue).(*symbolRecord)
-	rs.Unlock()
 	return res
 }
 

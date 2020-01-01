@@ -24,13 +24,13 @@ var (
 	tradesChan chan []*trade
 )
 
-// Run a binance client to collect historical trades
-func Run() {
+// Collect a binance client to collect historical trades
+func Collect() {
 	defer db.Close()
 
 	bc.Warning("NOTICE: 国内的 IP 无法访问 binance 的 API")
 
-	rs := newRecords(getSymbols(), 12)
+	rs := newRecords(getSymbols(), 8)
 
 	// 访问限制是，每分钟 240 次。
 	// 也就是每次的间隔时间为 250 毫秒
@@ -58,6 +58,9 @@ func Run() {
 
 func do(rs *records) {
 	r := rs.pop()
+	if r == nil {
+		return
+	}
 	symbol, utc, id := r.symbol, r.utc, r.id
 	trades, err := request(symbol, id+1)
 	if err != nil {
@@ -83,8 +86,8 @@ func do(rs *records) {
 	rs.push(r)
 }
 
-func localTime(UTCInMillionSecond int64) time.Time {
-	return time.Unix(0, UTCInMillionSecond*1000000)
+func localTime(UTCInMillisecond int64) time.Time {
+	return time.Unix(0, UTCInMillisecond*1000000)
 }
 
 func checkFunc() func(r *symbolRecord) {

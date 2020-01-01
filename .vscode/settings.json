@@ -4,6 +4,7 @@
 		"Beary",
 		"ETHBTC",
 		"Massimiliano",
+		"Metas",
 		"OKEX",
 		"Pippi",
 		"ROWID",
@@ -40,6 +41,8 @@
 		"supervisord",
 		"systemd",
 		"sysv",
-		"testdata"
+		"testdata",
+		"xorm",
+		"xormplus"
 	]
 }

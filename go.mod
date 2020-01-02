@@ -16,10 +16,12 @@ require (
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/bndr/gotabulate v1.1.2 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20191106031601-ce3c9ade29de // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/jinzhu/gorm v1.9.11
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/pelletier/go-toml v1.6.0
+	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/stretchr/testify v1.4.0
 	github.com/t-tiger/gorm-bulk-insert v1.2.0
@@ -28,6 +30,7 @@ require (
 	github.com/xormplus/core v0.0.0-20190724072625-00f5a85ad6e0 // indirect
 	github.com/xormplus/xorm v0.0.0-20190926190243-42377f593eb1
 	golang.org/x/sys v0.0.0-20191228213918-04cbcbbfeed8 // indirect
+	golang.org/x/tools v0.0.0-20191230220329-2aa90c603ae3 // indirect
 	gopkg.in/flosch/pongo2.v3 v3.0.0-20141028000813-5e81b817a0c4 // indirect
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

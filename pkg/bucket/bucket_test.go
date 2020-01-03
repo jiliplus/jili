@@ -9,7 +9,7 @@ import (
 
 func Test_take(t *testing.T) {
 	Convey("想要从 bucket 中拿走 token", t, func() {
-		b := newBucket(time.Minute, 60, nil)
+		b := newBucket(time.Minute, 60)
 		Convey("如果 count <=0,", func() {
 			waitTime0 := b.take(time.Now(), 0)
 			waitTime1 := b.take(time.Now(), -1)
@@ -29,12 +29,8 @@ func Test_take(t *testing.T) {
 
 func Test_newBucket(t *testing.T) {
 	Convey("想要生成 *bucket", t, func() {
-		Convey("newBucket(time.Minute, 60, nil)", func() {
-			b := newBucket(time.Minute, 60, nil)
-			Convey("b.clock 的类型应该是 realClock", func() {
-				_, isRealClockType := b.clock.(realClock)
-				So(isRealClockType, ShouldBeTrue)
-			})
+		Convey("newBucket(time.Minute, 60)", func() {
+			b := newBucket(time.Minute, 60)
 			Convey("b.interval 应该是 一秒钟", func() {
 				interval := time.Duration(b.interval)
 				So(interval, ShouldEqual, time.Second)

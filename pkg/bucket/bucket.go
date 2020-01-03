@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+var now = time.Now
+var sleep = time.Sleep
+
 type bucket struct {
 	// start 保存了 bucket 创建的时间
 	start time.Time
@@ -14,8 +17,6 @@ type bucket struct {
 	quantum int64
 	// tick 的时长
 	interval int64
-	// clock 便于测试
-	clock Clock
 	// mutex 保护以下属性
 	sync.Mutex
 	// available tokens
@@ -25,10 +26,7 @@ type bucket struct {
 }
 
 // newBucket return bucket point
-func newBucket(duration time.Duration, capacity int64, clock Clock) *bucket {
-	if clock == nil {
-		clock = realClock{}
-	}
+func newBucket(duration time.Duration, capacity int64) *bucket {
 	if capacity <= 0 {
 		panic("bucket's capacity should > 0")
 	}
@@ -45,11 +43,10 @@ func newBucket(duration time.Duration, capacity int64, clock Clock) *bucket {
 	d := gcd(int64(duration), capacity)
 	interval, quantum := int64(duration)/d, capacity/d
 	return &bucket{
-		start:      clock.Now(),
+		start:      now(),
 		capacity:   capacity,
 		quantum:    quantum,
 		interval:   interval,
-		clock:      clock,
 		available:  capacity,
 		latestTick: 0,
 	}
@@ -93,20 +90,4 @@ func (b *bucket) updateAvailable(newTick int64) {
 		b.available = b.capacity
 	}
 	return
-}
-
-// Clock for test
-type Clock interface {
-	Now() time.Time
-	Sleep(d time.Duration)
-}
-
-type realClock struct{}
-
-func (realClock) Now() time.Time {
-	return time.Now()
-}
-
-func (realClock) Sleep(d time.Duration) {
-	time.Sleep(d)
 }

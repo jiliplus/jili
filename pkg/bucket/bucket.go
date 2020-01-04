@@ -13,16 +13,20 @@ type bucket struct {
 	start time.Time
 	// bucket 的最大容量
 	capacity int64
-	// 每次添加的数量
-	quantum int64
 	// tick 的时长
-	interval int64
+	interval time.Duration
+	// 每 tick 添加的数量
+	quantum int64
 	// mutex 保护以下属性
 	sync.Mutex
-	// available tokens
-	available int64
-	// latestTick for available tokens
-	latestTick int64
+	// 更新令牌的时间点
+	tick int64
+	// 普通令牌的数量
+	normal int64
+	// 已经优先使用的令牌数量
+	Prioritized int64
+	// 预留的优先令牌的数量
+	reserved int64
 }
 
 // newBucket return bucket point
@@ -41,14 +45,14 @@ func newBucket(duration time.Duration, capacity int64) *bucket {
 	// https://github.com/juju/ratelimit/blob/f60b32039441cd828005f82f3a54aafd00bc9882/ratelimit.go#L104
 	// 中使用的方法。
 	d := gcd(int64(duration), capacity)
-	interval, quantum := int64(duration)/d, capacity/d
+	interval, quantum := duration/time.Duration(d), capacity/d
 	return &bucket{
-		start:      now(),
-		capacity:   capacity,
-		quantum:    quantum,
-		interval:   interval,
-		available:  capacity,
-		latestTick: 0,
+		start:    now(),
+		capacity: capacity,
+		quantum:  quantum,
+		interval: interval,
+		normal:   capacity,
+		tick:     0,
 	}
 }
 
@@ -64,30 +68,31 @@ func (b *bucket) take(now time.Time, count int64) (waitTime time.Duration) {
 		return 0
 	}
 	tick := b.tickOf(now)
-	b.updateAvailable(tick)
-	remain := b.available - count
+	b.updateToken(tick)
+	remain := b.normal - count
 	if remain >= 0 {
-		b.available = remain
+		b.normal = remain
 		return 0
 	}
 	// +(b.quantum-1) 是为了到达 endTick 时，
 	// 一定有足够的 token
 	endTick := tick + (-remain+(b.quantum-1))/b.quantum
-	endTime := b.start.Add(time.Duration(endTick * b.interval))
+	endTime := b.start.Add(time.Duration(endTick) * b.interval)
 	waitTime = endTime.Sub(now)
 	return
 }
 
-func (b *bucket) tickOf(now time.Time) int64 {
-	return int64(now.Sub(b.start)) / b.interval
+func (b *bucket) tickOf(t time.Time) int64 {
+	return int64(t.Sub(b.start) / b.interval)
 }
 
-func (b *bucket) updateAvailable(newTick int64) {
-	lastTick := b.latestTick
-	b.latestTick = newTick
-	b.available += (newTick - lastTick) * b.quantum
-	if b.available > b.capacity {
-		b.available = b.capacity
+func (b *bucket) updateToken(newTick int64) {
+	lastTick := b.tick
+	b.tick = newTick
+	b.normal += (newTick-lastTick)*b.quantum - b.Prioritized
+	b.Prioritized = 0
+	if b.normal > b.capacity-b.reserved {
+		b.normal = b.capacity - b.reserved
 	}
 	return
 }

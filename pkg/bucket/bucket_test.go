@@ -19,7 +19,7 @@ func Test_take(t *testing.T) {
 			})
 		})
 		Convey("如果 count = b.available + 1", func() {
-			waitTime := b.take(time.Now(), b.available+1)
+			waitTime := b.take(time.Now(), b.normal+1)
 			Convey("那么，需要等待将近一秒钟", func() {
 				So(waitTime, ShouldBeBetweenOrEqual, time.Millisecond*980, time.Second)
 			})

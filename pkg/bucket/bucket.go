@@ -5,13 +5,59 @@ import (
 	"time"
 )
 
+// Bucket 会保留一部分的 token，仅供 Hurry 使用。
+type Bucket interface {
+	// Hurry 会先使用为自己保存的 token
+	// 不够的时候，再 Wait token
+	Hurry(count int64)
+
+	// Wait 无法使用保留的 token
+	Wait(count int64)
+}
+
 var now = time.Now
 var sleep = time.Sleep
 
 type bucket struct {
-	// start 保存了 bucket 创建的时间
+	reserving, normal *subBucket
+}
+
+// New 返回了 Bucket 接口的变量
+// reserving 代表了 duration 期间保留给 Hurry 方法的 token 数量
+func New(duration time.Duration, capacity, reserving int64) Bucket {
+	start := now()
+	return &bucket{
+		reserving: newBasic(start, duration, reserving),
+		normal:    newBasic(start, duration, capacity-reserving),
+	}
+}
+
+var hurryQuickReturn = func() {}
+
+func (b *bucket) Hurry(count int64) {
+	if count <= 0 {
+		hurryQuickReturn()
+		return
+	}
+	debt := b.reserving.hurry(count)
+	b.Wait(debt)
+}
+
+var waitQuickReturn = func() {}
+
+func (b *bucket) Wait(count int64) {
+	if count <= 0 {
+		waitQuickReturn()
+		return
+	}
+	dur := b.normal.wait(count)
+	sleep(dur)
+}
+
+type subBucket struct {
+	// 创建的时间
 	start time.Time
-	// bucket 的最大容量
+	// 最大容量
 	capacity int64
 	// tick 的时长
 	interval time.Duration
@@ -22,15 +68,11 @@ type bucket struct {
 	// 更新令牌的时间点
 	tick int64
 	// 普通令牌的数量
-	normal int64
-	// 已经优先使用的令牌数量
-	Prioritized int64
-	// 预留的优先令牌的数量
-	reserved int64
+	available int64
 }
 
-// newBucket return bucket point
-func newBucket(duration time.Duration, capacity int64) *bucket {
+// newBasic return basic pointer
+func newBasic(start time.Time, duration time.Duration, capacity int64) *subBucket {
 	if capacity <= 0 {
 		panic("bucket's capacity should > 0")
 	}
@@ -46,14 +88,66 @@ func newBucket(duration time.Duration, capacity int64) *bucket {
 	// 中使用的方法。
 	d := gcd(int64(duration), capacity)
 	interval, quantum := duration/time.Duration(d), capacity/d
-	return &bucket{
-		start:    now(),
-		capacity: capacity,
-		quantum:  quantum,
-		interval: interval,
-		normal:   capacity,
-		tick:     0,
+	return &subBucket{
+		start:     start,
+		capacity:  capacity,
+		interval:  interval,
+		quantum:   quantum,
+		available: capacity,
+		tick:      0,
 	}
+}
+
+func (b *subBucket) updateToken() {
+	lastTick, newTick := b.tick, b.time2tick(now())
+	b.tick = newTick
+	b.available += (newTick - lastTick) * b.quantum
+	if b.available > b.capacity {
+		b.available = b.capacity
+	}
+}
+
+func (b *subBucket) consume(count int64) int64 {
+	remain := b.available - count
+	if remain < 0 {
+		b.available = 0
+		return -remain
+	}
+	b.available = remain
+	return 0
+}
+
+func (b *subBucket) needWait(debt int64) time.Duration {
+	if debt == 0 {
+		return 0
+	}
+	// +(b.quantum-1) 是为了到达 endTick 时， 一定有足够的 token
+	endTick := b.tick + (debt+(b.quantum-1))/b.quantum
+	endTime := b.start.Add(time.Duration(endTick) * b.interval)
+	return endTime.Sub(b.tick2Time())
+}
+
+func (b *subBucket) hurry(count int64) int64 {
+	b.Lock()
+	defer b.Unlock()
+	b.updateToken()
+	return b.consume(count)
+}
+
+func (b *subBucket) wait(count int64) time.Duration {
+	b.Lock()
+	defer b.Unlock()
+	b.updateToken()
+	debt := b.consume(count)
+	return b.needWait(debt)
+}
+
+func (b *subBucket) time2tick(t time.Time) int64 {
+	return int64(t.Sub(b.start) / b.interval)
+}
+
+func (b *subBucket) tick2Time() time.Time {
+	return b.start.Add(b.interval * time.Duration(b.tick))
 }
 
 func gcd(m, n int64) int64 {
@@ -61,38 +155,4 @@ func gcd(m, n int64) int64 {
 		return m
 	}
 	return gcd(n, m%n)
-}
-
-func (b *bucket) take(now time.Time, count int64) (waitTime time.Duration) {
-	if count <= 0 {
-		return 0
-	}
-	tick := b.tickOf(now)
-	b.updateToken(tick)
-	remain := b.normal - count
-	if remain >= 0 {
-		b.normal = remain
-		return 0
-	}
-	// +(b.quantum-1) 是为了到达 endTick 时，
-	// 一定有足够的 token
-	endTick := tick + (-remain+(b.quantum-1))/b.quantum
-	endTime := b.start.Add(time.Duration(endTick) * b.interval)
-	waitTime = endTime.Sub(now)
-	return
-}
-
-func (b *bucket) tickOf(t time.Time) int64 {
-	return int64(t.Sub(b.start) / b.interval)
-}
-
-func (b *bucket) updateToken(newTick int64) {
-	lastTick := b.tick
-	b.tick = newTick
-	b.normal += (newTick-lastTick)*b.quantum - b.Prioritized
-	b.Prioritized = 0
-	if b.normal > b.capacity-b.reserved {
-		b.normal = b.capacity - b.reserved
-	}
-	return
 }

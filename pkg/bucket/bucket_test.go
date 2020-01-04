@@ -4,39 +4,53 @@ import (
 	"testing"
 	"time"
 
+	"github.com/prashantv/gostub"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Test_take(t *testing.T) {
-	Convey("想要从 bucket 中拿走 token", t, func() {
-		b := newBucket(time.Minute, 60)
-		Convey("如果 count <=0,", func() {
-			waitTime0 := b.take(time.Now(), 0)
-			waitTime1 := b.take(time.Now(), -1)
-			Convey("那么，不需要等待", func() {
-				So(waitTime0, ShouldEqual, 0)
-				So(waitTime1, ShouldEqual, 0)
+func Test_Bucket_quickReturn(t *testing.T) {
+	Convey("新生成一个符合 Bucket 接口的变量", t, func() {
+		b := New(time.Second, 2, 1)
+		Convey("如果 Hurry 的 count 不是正数。", func() {
+			isQuickReturned := false
+			stubs := gostub.Stub(&hurryQuickReturn, func() {
+				isQuickReturned = true
+			})
+			defer stubs.Reset()
+			Convey("b.Hurry(-1) 后，isQuickReturn == true", func() {
+				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
+					So(isQuickReturned, ShouldBeFalse)
+				})
+				b.Hurry(-1)
+				So(isQuickReturned, ShouldBeTrue)
+			})
+			Convey("b.Hurry(0) 后，isQuickReturn == true", func() {
+				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
+					So(isQuickReturned, ShouldBeFalse)
+				})
+				b.Hurry(0)
+				So(isQuickReturned, ShouldBeTrue)
 			})
 		})
-		Convey("如果 count = b.available + 1", func() {
-			waitTime := b.take(time.Now(), b.normal+1)
-			Convey("那么，需要等待将近一秒钟", func() {
-				So(waitTime, ShouldBeBetweenOrEqual, time.Millisecond*980, time.Second)
+		Convey("如果 Wait 的 count 不是正数。", func() {
+			isQuickReturned := false
+			stubs := gostub.Stub(&waitQuickReturn, func() {
+				isQuickReturned = true
 			})
-		})
-	})
-}
-
-func Test_newBucket(t *testing.T) {
-	Convey("想要生成 *bucket", t, func() {
-		Convey("newBucket(time.Minute, 60)", func() {
-			b := newBucket(time.Minute, 60)
-			Convey("b.interval 应该是 一秒钟", func() {
-				interval := time.Duration(b.interval)
-				So(interval, ShouldEqual, time.Second)
+			defer stubs.Reset()
+			Convey("b.Wait(-1) 后，isQuickReturn == true", func() {
+				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
+					So(isQuickReturned, ShouldBeFalse)
+				})
+				b.Wait(-1)
+				So(isQuickReturned, ShouldBeTrue)
 			})
-			Convey("b.quantum 应该是 1", func() {
-				So(b.quantum, ShouldEqual, 1)
+			Convey("b.Wait(0) 后，isQuickReturn == true", func() {
+				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
+					So(isQuickReturned, ShouldBeFalse)
+				})
+				b.Wait(0)
+				So(isQuickReturned, ShouldBeTrue)
 			})
 		})
 	})

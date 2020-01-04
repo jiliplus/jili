@@ -24,6 +24,9 @@ type bucket struct {
 
 // New 返回了 Bucket 接口的变量
 // reserving 代表了 duration 期间保留给 Hurry 方法的 token 数量
+// 请注意，reserving 的数量请尽量少一点。
+// 因为，Hurry时候，如果需要用到 Wait 的话，
+// 只能按照 (capacity-reserving)/duration 的速度，等待剩下的 token
 func New(duration time.Duration, capacity, reserving int64) Bucket {
 	start := now()
 	return &bucket{

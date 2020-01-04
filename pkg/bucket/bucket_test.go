@@ -8,6 +8,64 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func Test_Bucket_Hurry(t *testing.T) {
+	Convey("新生成一个符合 Bucket 接口的变量", t, func() {
+		nowTime := time.Now()
+		var sleepDur time.Duration
+		stub := gostub.StubFunc(&now, nowTime)
+		stub.Stub(&sleep, func(d time.Duration) {
+			sleepDur = d
+		})
+		defer stub.Reset()
+		b := New(time.Second*4, 4, 2)
+		Convey("b.Hurry(1) 后，不会 sleep", func() {
+			b.Hurry(1)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Hurry(2) 后，不会 sleep", func() {
+			b.Hurry(2)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Hurry(3) 后，不会 sleep", func() {
+			b.Hurry(3)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Hurry(4) 后，不会 sleep", func() {
+			b.Hurry(4)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Hurry(5) 后，sleep 1 秒", func() {
+			b.Hurry(5)
+			So(sleepDur, ShouldEqual, time.Second)
+		})
+	})
+}
+
+func Test_Bucket_Wait(t *testing.T) {
+	Convey("新生成一个符合 Bucket 接口的变量", t, func() {
+		nowTime := time.Now()
+		var sleepDur time.Duration
+		stub := gostub.StubFunc(&now, nowTime)
+		stub.Stub(&sleep, func(d time.Duration) {
+			sleepDur = d
+		})
+		defer stub.Reset()
+		b := New(time.Second*4, 4, 2)
+		Convey("b.Wait(1) 后，不会 sleep", func() {
+			b.Wait(1)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Wait(2) 后，不会 sleep", func() {
+			b.Wait(2)
+			So(sleepDur, ShouldEqual, 0)
+		})
+		Convey("b.Wait(3) 后，sleep 1 秒", func() {
+			b.Wait(3)
+			So(sleepDur, ShouldEqual, time.Second)
+		})
+	})
+}
+
 func Test_Bucket_quickReturn(t *testing.T) {
 	Convey("新生成一个符合 Bucket 接口的变量", t, func() {
 		b := New(time.Second, 2, 1)
@@ -69,7 +127,7 @@ func Test_bucket_new(t *testing.T) {
 			Convey("无论 capacity 为何值, 会 panic", func() {
 				capacity := int64(2)
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				},
 					ShouldPanicWith,
 					"bucket's parameter should 0 <= reserved < capacity")
@@ -80,20 +138,20 @@ func Test_bucket_new(t *testing.T) {
 			Convey("reserved < capacity 时, 不会 panic", func() {
 				capacity := reserved + 1
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				}, ShouldNotPanic)
 			})
 			Convey("reserved >= capacity 时, 会 panic", func() {
 				capacity := reserved - 1
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				},
 					ShouldPanicWith,
 					"bucket's parameter should 0 <= reserved < capacity",
 				)
 				capacity = reserved
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				},
 					ShouldPanicWith,
 					"bucket's parameter should 0 <= reserved < capacity",
@@ -105,20 +163,20 @@ func Test_bucket_new(t *testing.T) {
 			Convey("reserved < capacity 时, 不会 panic", func() {
 				capacity := reserved + 1
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				}, ShouldNotPanic)
 			})
 			Convey("reserved >= capacity 时, 会 panic", func() {
 				capacity := reserved - 1
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				},
 					ShouldPanicWith,
 					"bucket's parameter should 0 <= reserved < capacity",
 				)
 				capacity = reserved
 				So(func() {
-					newBucket2(time.Second, capacity, reserved)
+					newBucket(time.Second, capacity, reserved)
 				},
 					ShouldPanicWith,
 					"bucket's parameter should 0 <= reserved < capacity",
@@ -134,7 +192,7 @@ func Test_bucket_new(t *testing.T) {
 			return nowTime
 		})
 		defer stub.Reset()
-		b := newBucket2(dur, capacity, reserved)
+		b := newBucket(dur, capacity, reserved)
 		d := gcd(capacity, int64(dur))
 		Convey("bucket 的各项属性应该符合预期。", func() {
 			So(b.start, ShouldEqual, nowTime)
@@ -152,7 +210,7 @@ func Test_bucket_new(t *testing.T) {
 func Test_bucket_update(t *testing.T) {
 	Convey("把新 bucket 的 hToken 和 wToken 清空", t, func() {
 		capacity, reserved := int64(4), int64(2)
-		b := newBucket2(time.Second, capacity, reserved)
+		b := newBucket(time.Second, capacity, reserved)
 		b.hToken, b.wToken = 0, 0
 		Convey("1 个 interval 后", func() {
 			b.update(b.start.Add(b.interval * 1))
@@ -195,7 +253,7 @@ func Test_bucket_update(t *testing.T) {
 func Test_bucket_hTake(t *testing.T) {
 	Convey("新建了一个 bucket", t, func() {
 		capacity, reserved := int64(4), int64(2)
-		b := newBucket2(time.Second, capacity, reserved)
+		b := newBucket(time.Second, capacity, reserved)
 		Convey("hTake(1)", func() {
 			remain := b.hTake(1)
 			Convey("remain = 0, hToken = 1, wToken = 2", func() {
@@ -242,7 +300,7 @@ func Test_bucket_hTake(t *testing.T) {
 func Test_bucket_wTake(t *testing.T) {
 	Convey("新建了一个 bucket", t, func() {
 		capacity, reserved := int64(4), int64(2)
-		b := newBucket2(time.Second, capacity, reserved)
+		b := newBucket(time.Second, capacity, reserved)
 		Convey("wTake(1)", func() {
 			remain := b.wTake(1)
 			Convey("remain = 0, hToken = 2, wToken = 1", func() {
@@ -273,7 +331,7 @@ func Test_bucket_wTake(t *testing.T) {
 func Test_bucket_needTime(t *testing.T) {
 	Convey("新建了一个 bucket", t, func() {
 		capacity, reserved := int64(4), int64(2)
-		b := newBucket2(time.Second, capacity, reserved)
+		b := newBucket(time.Second, capacity, reserved)
 		Convey("needTime(0)", func() {
 			dur := b.needTime(0, now())
 			Convey("dur = 0", func() {

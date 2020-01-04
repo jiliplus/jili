@@ -17,18 +17,11 @@ func Test_Bucket_quickReturn(t *testing.T) {
 				isQuickReturned = true
 			})
 			defer stubs.Reset()
-			Convey("b.Hurry(-1) 后，isQuickReturn == true", func() {
-				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
-					So(isQuickReturned, ShouldBeFalse)
-				})
-				b.Hurry(-1)
-				So(isQuickReturned, ShouldBeTrue)
+			Convey("b.Hurry(-1) 前，isQuickReturn == false", func() {
+				So(isQuickReturned, ShouldBeFalse)
 			})
-			Convey("b.Hurry(0) 后，isQuickReturn == true", func() {
-				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
-					So(isQuickReturned, ShouldBeFalse)
-				})
-				b.Hurry(0)
+			b.Hurry(-1)
+			Convey("b.Hurry(-1) 后，isQuickReturn == true", func() {
 				So(isQuickReturned, ShouldBeTrue)
 			})
 		})
@@ -38,18 +31,11 @@ func Test_Bucket_quickReturn(t *testing.T) {
 				isQuickReturned = true
 			})
 			defer stubs.Reset()
-			Convey("b.Wait(-1) 后，isQuickReturn == true", func() {
-				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
-					So(isQuickReturned, ShouldBeFalse)
-				})
-				b.Wait(-1)
-				So(isQuickReturned, ShouldBeTrue)
+			Convey("b.Wait(-1) 前，isQuickReturn == false", func() {
+				So(isQuickReturned, ShouldBeFalse)
 			})
-			Convey("b.Wait(0) 后，isQuickReturn == true", func() {
-				Convey("没有使用 Bucket 时，isQuickReturn == false", func() {
-					So(isQuickReturned, ShouldBeFalse)
-				})
-				b.Wait(0)
+			b.Wait(-1)
+			Convey("b.Wait(-1) 后，isQuickReturn == true", func() {
 				So(isQuickReturned, ShouldBeTrue)
 			})
 		})

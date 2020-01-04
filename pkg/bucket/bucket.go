@@ -39,7 +39,7 @@ func (b *bucket) Hurry(count int64) {
 		hurryQuickReturn()
 		return
 	}
-	debt := b.reserving.hurry(count)
+	debt := b.reserving.hurry(count, now())
 	b.Wait(debt)
 }
 
@@ -50,7 +50,7 @@ func (b *bucket) Wait(count int64) {
 		waitQuickReturn()
 		return
 	}
-	dur := b.normal.wait(count)
+	dur := b.normal.wait(count, now())
 	sleep(dur)
 }
 
@@ -98,8 +98,8 @@ func newBasic(start time.Time, duration time.Duration, capacity int64) *subBucke
 	}
 }
 
-func (b *subBucket) updateToken() {
-	lastTick, newTick := b.tick, b.time2tick(now())
+func (b *subBucket) update(now time.Time) {
+	lastTick, newTick := b.tick, b.time2tick(now)
 	b.tick = newTick
 	b.available += (newTick - lastTick) * b.quantum
 	if b.available > b.capacity {
@@ -117,29 +117,31 @@ func (b *subBucket) consume(count int64) int64 {
 	return 0
 }
 
-func (b *subBucket) needWait(debt int64) time.Duration {
+// 当运行 needDuration 时，b.available 应该是 0
+func (b *subBucket) needDuration(debt int64, now time.Time) time.Duration {
 	if debt == 0 {
 		return 0
 	}
+	b.available -= debt
 	// +(b.quantum-1) 是为了到达 endTick 时， 一定有足够的 token
 	endTick := b.tick + (debt+(b.quantum-1))/b.quantum
 	endTime := b.start.Add(time.Duration(endTick) * b.interval)
-	return endTime.Sub(b.tick2Time())
+	return endTime.Sub(now)
 }
 
-func (b *subBucket) hurry(count int64) int64 {
+func (b *subBucket) hurry(count int64, now time.Time) int64 {
 	b.Lock()
 	defer b.Unlock()
-	b.updateToken()
+	b.update(now)
 	return b.consume(count)
 }
 
-func (b *subBucket) wait(count int64) time.Duration {
+func (b *subBucket) wait(count int64, now time.Time) time.Duration {
 	b.Lock()
 	defer b.Unlock()
-	b.updateToken()
+	b.update(now)
 	debt := b.consume(count)
-	return b.needWait(debt)
+	return b.needDuration(debt, now)
 }
 
 func (b *subBucket) time2tick(t time.Time) int64 {

@@ -109,7 +109,7 @@ func makeFoo(srcName string) {
 	}
 	defer stmt.Close()
 	for i := 0; i < 10; i++ {
-		_, err = stmt.Exec(i, fmt.Sprintf("こんにちわ世界%03d", i))
+		_, err = stmt.Exec(i, fmt.Sprintf("hello world %03d", i))
 		if err != nil {
 			log.Fatal(err)
 		}

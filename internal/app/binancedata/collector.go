@@ -34,7 +34,7 @@ func Collect() {
 
 	// 访问限制是，每分钟 240 次。
 	// 也就是每次的间隔时间为 250 毫秒
-	ticker := time.NewTicker(250 * time.Millisecond)
+	ticker := time.NewTicker(275 * time.Millisecond)
 
 	check := checkFunc()
 

@@ -146,6 +146,8 @@ github.com/t-tiger/gorm-bulk-insert v1.2.0 h1:o2f18HJ3hvEhmqs/bZXg8eEWvfbpFBtRor
 github.com/t-tiger/gorm-bulk-insert v1.2.0/go.mod h1:ruDlk8xDl+8sX4bA7PQuYly9YEb3pbp1eP2LCyeRrFY=
 github.com/tealeg/xlsx v1.0.5 h1:+f8oFmvY8Gw1iUXzPk+kz+4GpbDZPK1FhPiQRd+ypgE=
 github.com/tealeg/xlsx v1.0.5/go.mod h1:btRS8dz54TDnvKNosuAqxrM1QgN1udgk9O34bDCnORM=
+github.com/tilinna/clock v1.0.2 h1:6BO2tyAC9JbPExKH/z9zl44FLu1lImh3nDNKA0kgrkI=
+github.com/tilinna/clock v1.0.2/go.mod h1:ZsP7BcY7sEEz7ktc0IVy8Us6boDrK8VradlKRUGfOao=
 github.com/xormplus/builder v0.0.0-20190724032102-0ee351fedce9 h1:h7b9aRnem5U6YuCWZlAnRWyowAR8hIIyyqUkbuAn0ms=
 github.com/xormplus/builder v0.0.0-20190724032102-0ee351fedce9/go.mod h1:DR+4rxdyeR2G5yyiNx6j3/0TLjG5g+CICZfXmL2AHBg=
 github.com/xormplus/core v0.0.0-20190724072625-00f5a85ad6e0 h1:vqleyrxQwTNEr+jlW3VuOYlTRtoyDp/h6C6b0R9Ewro=

@@ -15,6 +15,7 @@
 		"binancecollector",
 		"binancedata",
 		"btcusdt",
+		"clockey",
 		"codecov",
 		"confd",
 		"consule",
@@ -45,6 +46,7 @@
 		"systemd",
 		"sysv",
 		"testdata",
+		"tilinna",
 		"xorm",
 		"xormplus"
 	]

@@ -27,6 +27,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/t-tiger/gorm-bulk-insert v1.2.0
 	github.com/tealeg/xlsx v1.0.5 // indirect
+	github.com/tilinna/clock v1.0.2
 	github.com/xormplus/builder v0.0.0-20190724032102-0ee351fedce9 // indirect
 	github.com/xormplus/core v0.0.0-20190724072625-00f5a85ad6e0 // indirect
 	github.com/xormplus/xorm v0.0.0-20190926190243-42377f593eb1

@@ -20,9 +20,9 @@ type Clock interface {
 	Tick(d time.Duration) <-chan time.Time
 	Until(t time.Time) time.Duration
 
-	// DeadlineContext returns a copy of the parent context with the associated
+	// ContextWithDeadline returns a copy of the parent context with the associated
 	// Clock deadline adjusted to be no later than d.
-	DeadlineContext(parent context.Context, d time.Time) (context.Context, context.CancelFunc)
+	ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc)
 
 	// ContextWithTimeout returns DeadlineContext(parent, Now(parent).Add(timeout)).
 	ContextWithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc)

@@ -7,9 +7,9 @@ import (
 
 type realClock struct{}
 
-// New 返回标准库中真实时间的时钟。
+// NewRealClock 返回标准库中真实时间的时钟。
 // 并实现了 Clock 接口
-func New() Clock {
+func NewRealClock() Clock {
 	return realClock{}
 }
 
@@ -50,7 +50,7 @@ func (realClock) Sleep(d time.Duration) {
 }
 
 func (realClock) Tick(d time.Duration) <-chan time.Time {
-	// Using time.Tick would trigger a vet tool warning.
+	// 删除以下内容时为了让 Tick 的逻辑与 time.Tick 中的一致
 	// if d <= 0 {
 	// return nil
 	// }
@@ -63,7 +63,7 @@ func (realClock) Until(t time.Time) time.Duration {
 	return time.Until(t)
 }
 
-func (realClock) DeadlineContext(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
+func (realClock) ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
 	return context.WithDeadline(parent, d)
 }
 

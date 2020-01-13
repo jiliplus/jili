@@ -114,22 +114,22 @@ func (m *Mock) Until(t time.Time) time.Duration {
 	return t.Sub(m.now)
 }
 
-// DeadlineContext implements Clock.
-func (m *Mock) DeadlineContext(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
+// ContextWithDeadline implements Clock.
+func (m *Mock) ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
 	m.Lock()
 	defer m.Unlock()
-	return m.deadlineContext(parent, d)
+	return m.contextWithDeadline(parent, d)
 }
 
 // ContextWithTimeout implements Clock.
 func (m *Mock) ContextWithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc) {
 	m.Lock()
 	defer m.Unlock()
-	return m.deadlineContext(parent, m.now.Add(timeout))
+	return m.contextWithDeadline(parent, m.now.Add(timeout))
 }
 
-func (m *Mock) deadlineContext(parent context.Context, deadline time.Time) (context.Context, context.CancelFunc) {
-	cancelCtx, cancel := context.WithCancel(Context(parent, m))
+func (m *Mock) contextWithDeadline(parent context.Context, deadline time.Time) (context.Context, context.CancelFunc) {
+	cancelCtx, cancel := context.WithCancel(Set(parent, m))
 	if pd, ok := parent.Deadline(); ok && !pd.After(deadline) {
 		return cancelCtx, cancel
 	}

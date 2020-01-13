@@ -81,7 +81,7 @@ func (t *Timer) Stop() bool {
 	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.mockTimer.stopped()
+	wasActive := !t.mockTimer.hasStopped()
 	t.mock.stop(t.mockTimer)
 	return wasActive
 }
@@ -97,7 +97,7 @@ func (t *Timer) Reset(d time.Duration) bool {
 	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.mockTimer.stopped()
+	wasActive := !t.mockTimer.hasStopped()
 	t.deadline = t.mock.now.Add(d)
 	if !t.deadline.After(t.mock.now) {
 		t.fire()

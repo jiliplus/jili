@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// TODO: 重命名这个结构体
 type mockTimer struct {
 	deadline  time.Time
 	fire      func() time.Duration
@@ -22,7 +23,7 @@ func newMockTimer(m *Mock, d time.Time) *mockTimer {
 	}
 }
 
-func (t mockTimer) stopped() bool {
+func (t mockTimer) hasStopped() bool {
 	return t.heapIndex == removed
 }
 
@@ -62,13 +63,13 @@ func (h *timerHeap) start(t *mockTimer) {
 }
 
 func (h *timerHeap) stop(t *mockTimer) {
-	if !t.stopped() {
+	if !t.hasStopped() {
 		heap.Remove(h, t.heapIndex)
 	}
 }
 
 func (h *timerHeap) reset(t *mockTimer) {
-	if !t.stopped() {
+	if !t.hasStopped() {
 		heap.Fix(h, t.heapIndex)
 	} else {
 		heap.Push(h, t)

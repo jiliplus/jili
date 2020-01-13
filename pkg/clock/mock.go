@@ -32,7 +32,7 @@ type Mock struct {
 func NewMock(now time.Time) *Mock {
 	return &Mock{
 		now:        now,
-		mockTimers: &timerHeap{},
+		mockTimers: &taskHeap{},
 	}
 }
 

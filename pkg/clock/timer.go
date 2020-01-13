@@ -46,7 +46,7 @@ func (m *Mock) Sleep(d time.Duration) {
 
 func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	t := &Timer{
-		mockTimer: newMockTimer(m, deadline),
+		mockTimer: newTask(m, deadline),
 	}
 	if afterFunc != nil {
 		t.fire = func() time.Duration {

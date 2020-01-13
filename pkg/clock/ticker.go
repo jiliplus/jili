@@ -38,7 +38,7 @@ func (m *Mock) newTicker(d time.Duration) *Ticker {
 	c := make(chan time.Time, 1)
 	t := &Ticker{
 		C:         c,
-		mockTimer: newMockTimer(m, m.now.Add(d)),
+		mockTimer: newTask(m, m.now.Add(d)),
 	}
 	t.fire = func() time.Duration {
 		select {

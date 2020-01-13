@@ -4,9 +4,16 @@ import "time"
 
 // Timer represents a time.Timer.
 type Timer struct {
-	C     <-chan time.Time
+	C <-chan time.Time
+	// TODO: 修改 Stop2 为 Stop
+	// https://golang.org/pkg/time/#Timer.Reset
+	// TODO: 好好阅读标准库中,关于 Reset 和 Stop 的处理逻辑
+	Stop2  func() bool
+	Reset2 func() bool
+	// 当 timer != nil 的时候, Timer 代表了 real clock
 	timer *time.Timer
-	*mockTimer
+	// TODO: 删除此处内容,使用 Stop2 以后,可以不用保留 task 属性了
+	*task
 }
 
 // After waits for the duration to elapse and then sends the current time on
@@ -46,7 +53,7 @@ func (m *Mock) Sleep(d time.Duration) {
 
 func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	t := &Timer{
-		mockTimer: newTask(m, deadline),
+		task: newTask(m, deadline),
 	}
 	if afterFunc != nil {
 		t.fire = func() time.Duration {
@@ -67,7 +74,7 @@ func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	if !t.deadline.After(m.now) {
 		t.fire()
 	} else {
-		m.start(t.mockTimer)
+		m.start(t.task)
 	}
 	return t
 }
@@ -81,8 +88,8 @@ func (t *Timer) Stop() bool {
 	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.mockTimer.hasStopped()
-	t.mock.stop(t.mockTimer)
+	wasActive := !t.task.hasStopped()
+	t.mock.stop(t.task)
 	return wasActive
 }
 
@@ -97,13 +104,13 @@ func (t *Timer) Reset(d time.Duration) bool {
 	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.mockTimer.hasStopped()
+	wasActive := !t.task.hasStopped()
 	t.deadline = t.mock.now.Add(d)
 	if !t.deadline.After(t.mock.now) {
 		t.fire()
-		t.mock.stop(t.mockTimer)
+		t.mock.stop(t.task)
 	} else {
-		t.mock.reset(t.mockTimer)
+		t.mock.reset(t.task)
 	}
 	return wasActive
 }

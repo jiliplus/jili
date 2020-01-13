@@ -7,10 +7,16 @@ import (
 )
 
 type mockTimers interface {
-	start(t *mockTimer)
-	stop(t *mockTimer)
-	reset(t *mockTimer)
-	next() *mockTimer
+	start(t *task)
+	stop(t *task)
+	reset(t *task)
+	next() *task
+}
+
+type taskOrder interface {
+	push(t *task)
+	pop() *task
+	hasTaskToRun(now time.Time) bool
 }
 
 // Mock implements a Clock that only moves with Add, AddNext and Set.
@@ -24,6 +30,7 @@ type Mock struct {
 	sync.Mutex
 	now time.Time
 	mockTimers
+	taskOrder
 }
 
 // NewMock returns a new Mock with current time set to now.
@@ -33,6 +40,7 @@ func NewMock(now time.Time) *Mock {
 	return &Mock{
 		now:        now,
 		mockTimers: &taskHeap{},
+		taskOrder:  newTaskHeap(),
 	}
 }
 
@@ -91,6 +99,22 @@ func (m *Mock) set(now time.Time) (time.Time, time.Duration) {
 			m.reset(t)
 		}
 	}
+}
+
+func (m *Mock) set2(now time.Time) (time.Time, time.Duration) {
+	last := m.now
+	for m.hasTaskToRun(now) {
+		t := m.pop()
+		if !t.isStopped {
+			continue
+		}
+		t = t.run()
+		if t != nil {
+			m.push(t)
+		}
+	}
+	m.now = now
+	return now, now.Sub(last)
 }
 
 // Now returns the current mocked time.

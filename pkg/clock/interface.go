@@ -8,7 +8,8 @@ import (
 	"time"
 )
 
-// Clock represents an interface to the functions in the standard time and context packages.
+// Clock 是对 time 和 context 标准库的部分 API 进行的封装
+// 就是需要在时间轴上进行跳转那些部分。
 type Clock interface {
 	After(d time.Duration) <-chan time.Time
 	AfterFunc(d time.Duration, f func()) *Timer
@@ -20,11 +21,10 @@ type Clock interface {
 	Tick(d time.Duration) <-chan time.Time
 	Until(t time.Time) time.Duration
 
-	// ContextWithDeadline returns a copy of the parent context with the associated
-	// Clock deadline adjusted to be no later than d.
+	// ContextWithDeadline 与 context.ContextWithDeadline 具有相同的功能
+	// 只是基于 Clock 的时间线
 	ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc)
-
-	// ContextWithTimeout returns DeadlineContext(parent, Now(parent).Add(timeout)).
+	// ContextWithTimeout 是 ContextWithDeadline(parent, Now(parent).Add(timeout)).
 	ContextWithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc)
 }
 

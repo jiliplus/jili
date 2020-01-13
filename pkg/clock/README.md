@@ -3,6 +3,7 @@
 - [总体思路](#%e6%80%bb%e4%bd%93%e6%80%9d%e8%b7%af)
 - [真实的 Clock](#%e7%9c%9f%e5%ae%9e%e7%9a%84-clock)
 - [虚拟的 Clock](#%e8%99%9a%e6%8b%9f%e7%9a%84-clock)
+- [死锁](#%e6%ad%bb%e9%94%81)
 
 ## 总体思路
 
@@ -26,3 +27,30 @@ clock 模块分为真实与虚拟的两个部分。真实的部分是以 time �
 - `mockContext`：虚拟的上下文
 
 随着时间的流逝，这三种对象需要在恰当的时间点进行触发。
+
+代码全部放在 `real-*.go` 中。
+
+## 死锁
+
+在使用 `mockTicker` 的时候，
+
+```go
+for {
+	// ...
+	<- mockTicker.C
+	now := mock.Now()
+	// ...
+}
+```
+
+以上代码很容易造成死锁。因为当 `mockClock` 的调整间隔大于 `mockTicker` 的周期的时候，会在 `mockClock` 的临界区内多次往 `mockTicker.C` 内发送数据。`mock.Now()` 又需要进入临界区，才能让 `<- mockTicker.C` 第二次获取数据。
+
+正确的用法是，
+
+```go
+for {
+	// ...
+	now := <- mockTicker.C
+	// ...
+}
+```

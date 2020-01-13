@@ -5,7 +5,7 @@ import "time"
 // mockTimer represents a time.mockTimer.
 type mockTimer struct {
 	C <-chan time.Time
-	*timePiece
+	*timePieceOld
 }
 
 // After waits for the duration to elapse and then sends the current time on
@@ -49,7 +49,7 @@ func (m *mockClock) Sleep(d time.Duration) {
 
 func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTimer {
 	t := &mockTimer{
-		timePiece: newTimePiece(m, deadline),
+		timePieceOld: newTimePiece(m, deadline),
 	}
 	if afterFunc != nil {
 		t.fire = func() time.Duration {
@@ -70,7 +70,7 @@ func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTime
 	if !t.deadline.After(m.now) {
 		t.fire()
 	} else {
-		m.start(t.timePiece)
+		m.start(t.timePieceOld)
 	}
 	return t
 }
@@ -81,8 +81,8 @@ func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTime
 func (t *mockTimer) Stop() bool {
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.timePiece.hasStopped()
-	t.mock.stop(t.timePiece)
+	wasActive := !t.timePieceOld.hasStopped()
+	t.mock.stop(t.timePieceOld)
 	return wasActive
 }
 
@@ -94,13 +94,13 @@ func (t *mockTimer) Stop() bool {
 func (t *mockTimer) Reset(d time.Duration) bool {
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.timePiece.hasStopped()
+	wasActive := !t.timePieceOld.hasStopped()
 	t.deadline = t.mock.now.Add(d)
 	if !t.deadline.After(t.mock.now) {
 		t.fire()
-		t.mock.stop(t.timePiece)
+		t.mock.stop(t.timePieceOld)
 	} else {
-		t.mock.reset(t.timePiece)
+		t.mock.reset(t.timePieceOld)
 	}
 	return wasActive
 }

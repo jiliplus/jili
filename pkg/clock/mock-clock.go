@@ -13,14 +13,14 @@ import (
 type mockClock struct {
 	sync.RWMutex
 	now time.Time
-	*pieceHeap
+	*pieceHeapOld
 }
 
 // NewMockClock returns a new Mock with current time set to now.
 func NewMockClock(now time.Time) UpdatableClock {
 	return &mockClock{
-		now:       now,
-		pieceHeap: newPieceHeap(),
+		now:          now,
+		pieceHeapOld: newPieceHeap(),
 	}
 }
 

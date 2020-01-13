@@ -1,13 +1,16 @@
 package clock
 
+import (
+	"container/heap"
+	"time"
+)
+
 type timePieceOld struct {
 	deadline  time.Time
 	fire      func() time.Duration
 	mock      *mockClock
 	heapIndex int
 }
-
-const removed = -1
 
 func newTimePiece(m *mockClock, d time.Time) *timePieceOld {
 	return &timePieceOld{

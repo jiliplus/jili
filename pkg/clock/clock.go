@@ -8,6 +8,7 @@ import (
 type realClock struct{}
 
 // New 返回标准库中真实时间的时钟。
+// 并实现了 Clock 接口
 func New() Clock {
 	return realClock{}
 }
@@ -16,16 +17,24 @@ func (realClock) After(d time.Duration) <-chan time.Time {
 	return time.After(d)
 }
 
-func (realClock) AfterFunc(d time.Duration, f func()) ResetStopper {
-	return time.AfterFunc(d, f)
+func (realClock) AfterFunc(d time.Duration, f func()) *Timer {
+	return &Timer{timer: time.AfterFunc(d, f)}
 }
 
-func (realClock) NewTicker(d time.Duration) Stopper {
-	return time.NewTicker(d)
+func (realClock) NewTicker(d time.Duration) *Ticker {
+	t := time.NewTicker(d)
+	return &Ticker{
+		C:      t.C,
+		ticker: t,
+	}
 }
 
-func (realClock) NewTimer(d time.Duration) ResetStopper {
-	return time.NewTimer(d)
+func (realClock) NewTimer(d time.Duration) *Timer {
+	t := time.NewTimer(d)
+	return &Timer{
+		C:     t.C,
+		timer: t,
+	}
 }
 
 func (realClock) Now() time.Time {
@@ -41,6 +50,12 @@ func (realClock) Sleep(d time.Duration) {
 }
 
 func (realClock) Tick(d time.Duration) <-chan time.Time {
+	// Using time.Tick would trigger a vet tool warning.
+	// if d <= 0 {
+	// return nil
+	// }
+	// TODO: 把以下内容放入 mockTicker.Tick 中
+	// panic(errors.New("non-positive interval for NewTicker"))
 	return time.NewTicker(d).C
 }
 
@@ -48,7 +63,7 @@ func (realClock) Until(t time.Time) time.Duration {
 	return time.Until(t)
 }
 
-func (realClock) ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
+func (realClock) DeadlineContext(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
 	return context.WithDeadline(parent, d)
 }
 

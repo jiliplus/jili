@@ -2,25 +2,26 @@ package clock
 
 import "time"
 
-// mockTimer represents a time.mockTimer.
-type mockTimer struct {
-	C <-chan time.Time
-	*timePieceOld
+// Timer represents a time.Timer.
+type Timer struct {
+	C     <-chan time.Time
+	timer *time.Timer
+	*mockTimer
 }
 
 // After waits for the duration to elapse and then sends the current time on
 // the returned channel.
 //
 // A negative or zero duration fires the underlying timer immediately.
-func (m *mockClock) After(d time.Duration) <-chan time.Time {
-	return m.newTimer(d).C
+func (m *Mock) After(d time.Duration) <-chan time.Time {
+	return m.NewTimer(d).C
 }
 
 // AfterFunc waits for the duration to elapse and then calls f in its own goroutine.
 // It returns a Timer that can be used to cancel the call using its Stop method.
 //
 // A negative or zero duration fires the timer immediately.
-func (m *mockClock) AfterFunc(d time.Duration, f func()) ResetStopper {
+func (m *Mock) AfterFunc(d time.Duration, f func()) *Timer {
 	m.Lock()
 	defer m.Unlock()
 	return m.newTimerFunc(m.now.Add(d), f)
@@ -30,26 +31,22 @@ func (m *mockClock) AfterFunc(d time.Duration, f func()) ResetStopper {
 // after at least duration d.
 //
 // A negative or zero duration fires the timer immediately.
-func (m *mockClock) NewTimer(d time.Duration) ResetStopper {
+func (m *Mock) NewTimer(d time.Duration) *Timer {
 	m.Lock()
 	defer m.Unlock()
-	return m.newTimer(d)
-}
-
-func (m *mockClock) newTimer(d time.Duration) *mockTimer {
 	return m.newTimerFunc(m.now.Add(d), nil)
 }
 
 // Sleep pauses the current goroutine for at least the duration d.
 //
 // A negative or zero duration causes Sleep to return immediately.
-func (m *mockClock) Sleep(d time.Duration) {
+func (m *Mock) Sleep(d time.Duration) {
 	<-m.After(d)
 }
 
-func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTimer {
-	t := &mockTimer{
-		timePieceOld: newTimePiece(m, deadline),
+func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
+	t := &Timer{
+		mockTimer: newMockTimer(m, deadline),
 	}
 	if afterFunc != nil {
 		t.fire = func() time.Duration {
@@ -70,7 +67,7 @@ func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTime
 	if !t.deadline.After(m.now) {
 		t.fire()
 	} else {
-		m.start(t.timePieceOld)
+		m.start(t.mockTimer)
 	}
 	return t
 }
@@ -78,11 +75,14 @@ func (m *mockClock) newTimerFunc(deadline time.Time, afterFunc func()) *mockTime
 // Stop prevents the Timer from firing.
 // It returns true if the call stops the timer, false if the timer has already
 // expired or been stopped.
-func (t *mockTimer) Stop() bool {
+func (t *Timer) Stop() bool {
+	if t.timer != nil {
+		return t.timer.Stop()
+	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.timePieceOld.hasStopped()
-	t.mock.stop(t.timePieceOld)
+	wasActive := !t.mockTimer.stopped()
+	t.mock.stop(t.mockTimer)
 	return wasActive
 }
 
@@ -91,16 +91,19 @@ func (t *mockTimer) Stop() bool {
 // expired or been stopped.
 //
 // A negative or zero duration fires the timer immediately.
-func (t *mockTimer) Reset(d time.Duration) bool {
+func (t *Timer) Reset(d time.Duration) bool {
+	if t.timer != nil {
+		return t.timer.Reset(d)
+	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	wasActive := !t.timePieceOld.hasStopped()
+	wasActive := !t.mockTimer.stopped()
 	t.deadline = t.mock.now.Add(d)
 	if !t.deadline.After(t.mock.now) {
 		t.fire()
-		t.mock.stop(t.timePieceOld)
+		t.mock.stop(t.mockTimer)
 	} else {
-		t.mock.reset(t.timePieceOld)
+		t.mock.reset(t.mockTimer)
 	}
 	return wasActive
 }

@@ -5,17 +5,16 @@ import (
 	"time"
 )
 
-// mockTicker represents a time.mockTicker.
-type mockTicker struct {
-	C    <-chan time.Time
-	fire func() time.Duration
-	mock *mockClock
-	*timePieceOld
+// Ticker represents a time.Ticker.
+type Ticker struct {
+	C      <-chan time.Time
+	ticker *time.Ticker
+	*mockTimer
 }
 
 // NewTicker returns a new Ticker containing a channel that will send the
 // current time with a period specified by the duration d.
-func (m *mockClock) NewTicker(d time.Duration) Stopper {
+func (m *Mock) NewTicker(d time.Duration) *Ticker {
 	m.Lock()
 	defer m.Unlock()
 	if d <= 0 {
@@ -26,7 +25,7 @@ func (m *mockClock) NewTicker(d time.Duration) Stopper {
 
 // Tick is a convenience wrapper for NewTicker providing access to the ticking
 // channel only.
-func (m *mockClock) Tick(d time.Duration) <-chan time.Time {
+func (m *Mock) Tick(d time.Duration) <-chan time.Time {
 	m.Lock()
 	defer m.Unlock()
 	if d <= 0 {
@@ -35,11 +34,11 @@ func (m *mockClock) Tick(d time.Duration) <-chan time.Time {
 	return m.newTicker(d).C
 }
 
-func (m *mockClock) newTicker(d time.Duration) *mockTicker {
+func (m *Mock) newTicker(d time.Duration) *Ticker {
 	c := make(chan time.Time, 1)
-	t := &mockTicker{
-		C:            c,
-		timePieceOld: newTimePiece(m, m.now.Add(d)),
+	t := &Ticker{
+		C:         c,
+		mockTimer: newMockTimer(m, m.now.Add(d)),
 	}
 	t.fire = func() time.Duration {
 		select {
@@ -48,13 +47,17 @@ func (m *mockClock) newTicker(d time.Duration) *mockTicker {
 		}
 		return d
 	}
-	m.start(t.timePieceOld)
+	m.start(t.mockTimer)
 	return t
 }
 
 // Stop turns off a ticker. After Stop, no more ticks will be sent.
-func (t *mockTicker) Stop() {
+func (t *Ticker) Stop() {
+	if t.ticker != nil {
+		t.ticker.Stop()
+		return
+	}
 	t.mock.Lock()
 	defer t.mock.Unlock()
-	t.mock.stop(t.timePieceOld)
+	t.mock.stop(t.mockTimer)
 }

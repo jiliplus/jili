@@ -8,35 +8,30 @@ import (
 	"time"
 )
 
-// UpdatableClock 是 Clock 和 updater 的合集
-type UpdatableClock interface {
-	Updater
-	Clock
-}
-
-// Clock 是对 time 和 context 标准库的部分 API 进行的封装
-// 就是需要在时间轴上进行跳转那些部分。
+// Clock represents an interface to the functions in the standard time and context packages.
 type Clock interface {
 	After(d time.Duration) <-chan time.Time
-	AfterFunc(d time.Duration, f func()) ResetStopper
-	NewTicker(d time.Duration) Stopper
-	NewTimer(d time.Duration) ResetStopper
+	AfterFunc(d time.Duration, f func()) *Timer
+	NewTicker(d time.Duration) *Ticker
+	NewTimer(d time.Duration) *Timer
 	Now() time.Time
 	Since(t time.Time) time.Duration
 	Sleep(d time.Duration)
 	Tick(d time.Duration) <-chan time.Time
 	Until(t time.Time) time.Duration
-	// ContextWithDeadline 与 context.ContextWithDeadline 具有相同的功能
-	// 只是基于 Clock 的时间线
-	ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc)
-	// ContextWithTimeout 是 ContextWithDeadline(parent, Now(parent).Add(timeout)).
+
+	// DeadlineContext returns a copy of the parent context with the associated
+	// Clock deadline adjusted to be no later than d.
+	DeadlineContext(parent context.Context, d time.Time) (context.Context, context.CancelFunc)
+
+	// ContextWithTimeout returns DeadlineContext(parent, Now(parent).Add(timeout)).
 	ContextWithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc)
 }
 
-// Updater 驱动 mock clock 的时间流逝。
+// Updatable 驱动 mock clock 的时间流逝。
 // Add 与 Set 在设置新的当前时间 t 之前，
 // 会触发所有 deadline <= t 的 tick 和 timer
-type Updater interface {
+type Updatable interface {
 	// Add 在 mock clock 的当前时间加上 d
 	// 成为 mock clock 新的当前时间
 	Add(d time.Duration) time.Time
@@ -48,17 +43,4 @@ type Updater interface {
 	// 并把 mock clock 的当前时间设置成触发时间，
 	// 返回值是新的当前时间和与前一个当前时间的差值。
 	Move() (time.Time, time.Duration)
-}
-
-// Stopper 能够停止
-// *time.Ticker 和 *mockTicker 实现了这个接口
-type Stopper interface {
-	Stop()
-}
-
-// ResetStopper 可以重置和停止
-// *time.Timer 和 *mockTimer 实现了这个接口
-type ResetStopper interface {
-	Reset(d time.Duration) bool
-	Stop() bool
 }

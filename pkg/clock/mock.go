@@ -34,10 +34,10 @@ type Mock struct {
 	taskOrder
 }
 
-// NewMock returns a new Mock with current time set to now.
+// NewMockClock returns a new Mock with current time set to now.
 //
 // Use Realtime to get the real-time Clock.
-func NewMock(now time.Time) *Mock {
+func NewMockClock(now time.Time) *Mock {
 	return &Mock{
 		now:        now,
 		mockTimers: &taskHeap{},

@@ -140,10 +140,10 @@ func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	return t
 }
 
-// TODO: 删除此处内容
 // Stop prevents the Timer from firing.
 // It returns true if the call stops the timer, false if the timer has already
 // expired or been stopped.
+// TODO: 删除此处内容
 func (t *Timer) Stop() bool {
 	if t.timer != nil {
 		return t.timer.Stop()
@@ -155,12 +155,12 @@ func (t *Timer) Stop() bool {
 	return wasActive
 }
 
-// TODO: 删除此处内容
 // Reset changes the timer to expire after duration d.
 // It returns true if the timer had been active, false if the timer had
 // expired or been stopped.
 //
 // A negative or zero duration fires the timer immediately.
+// TODO: 删除此处内容
 func (t *Timer) Reset(d time.Duration) bool {
 	if t.timer != nil {
 		return t.timer.Reset(d)

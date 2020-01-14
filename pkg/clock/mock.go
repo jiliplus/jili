@@ -17,6 +17,7 @@ type taskOrder interface {
 	push(t *task)
 	pop() *task
 	hasTaskToRun(now time.Time) bool
+	remove(t *task)
 }
 
 // Mock implements a Clock that only moves with Add, AddNext and Set.
@@ -105,9 +106,9 @@ func (m *Mock) set2(now time.Time) (time.Time, time.Duration) {
 	last := m.now
 	for m.hasTaskToRun(now) {
 		t := m.pop()
-		if !t.isStopped {
-			continue
-		}
+		// t.run() 会用到 m.now
+		// 所以,更新一下
+		m.now = t.deadline
 		t = t.run()
 		if t != nil {
 			m.push(t)

@@ -38,6 +38,7 @@ func (m *Mock) Tick(d time.Duration) <-chan time.Time {
 	return m.newTicker(d).C
 }
 
+// TODO: 删除此处内容
 func (m *Mock) newTicker(d time.Duration) *Ticker {
 	c := make(chan time.Time, 1)
 	t := &Ticker{
@@ -61,7 +62,7 @@ func (m *Mock) newTicker2(d time.Duration) *Ticker {
 		// 因为 time.Tick 的处理逻辑也是这样的
 		// 有人收就发过去, 每人接收就丢弃.
 		select {
-		case c <- t.deadline:
+		case c <- m.now:
 		default:
 		}
 		t.deadline = t.deadline.Add(d)
@@ -77,7 +78,7 @@ func (m *Mock) newTicker2(d time.Duration) *Ticker {
 			return
 		}
 		m.Lock()
-		t.task.isStopped = false
+		m.remove(t.task)
 		m.Unlock()
 	}
 	m.push(t.task)

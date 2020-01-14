@@ -21,7 +21,7 @@ type task struct {
 	// tick 或 timer
 	// 在 Stop 之前，isStopped = true
 	// 在 Stop 之后，isStopped = false
-	isStopped bool
+	// isStopped bool
 	// 用于替代 fire，
 	runTask func(t *task) *task
 	index   int
@@ -31,10 +31,10 @@ const removed = -1
 
 func newTask2(deadline time.Time, runTask func(t *task) *task) *task {
 	return &task{
-		deadline:  deadline,
-		runTask:   runTask,
-		isStopped: true,
-		index:     removed,
+		deadline: deadline,
+		runTask:  runTask,
+		index:    removed,
+		// isStopped: true,
 	}
 }
 
@@ -50,7 +50,6 @@ func (t *task) run() *task {
 	return t.runTask(t)
 }
 
-// TODO: 删除此处内容
 func (t task) hasStopped() bool {
 	return t.index == removed
 }
@@ -103,6 +102,12 @@ func (h *taskHeap) pop() (t *task) {
 
 func (h taskHeap) hasTaskToRun(now time.Time) bool {
 	return len(h) != 0 && h[0].deadline.Before(now)
+}
+
+func (h *taskHeap) remove(t *task) {
+	if !t.hasStopped() {
+		heap.Remove(h, t.index)
+	}
 }
 
 // TODO: 删除此处内容

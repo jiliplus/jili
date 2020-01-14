@@ -28,5 +28,15 @@
 				"label": ""
 			}
 		]
+	},
+	{
+		"path": "$ROOTPATH$/pkg/clock/ticker.go",
+		"bookmarks": [
+			{
+				"line": 80,
+				"column": 0,
+				"label": ""
+			}
+		]
 	}
 ]

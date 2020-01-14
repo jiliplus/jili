@@ -8,8 +8,16 @@ type Timer struct {
 	// TODO: 修改 Stop2 为 Stop
 	// https://golang.org/pkg/time/#Timer.Reset
 	// TODO: 好好阅读标准库中,关于 Reset 和 Stop 的处理逻辑
-	Stop2  func() bool
-	Reset2 func() bool
+	// Stop prevents the Timer from firing.
+	// It returns true if the call stops the timer, false if the timer has already
+	// expired or been stopped.
+	Stop2 func() bool
+	// Reset changes the timer to expire after duration d.
+	// It returns true if the timer had been active, false if the timer had
+	// expired or been stopped.
+	//
+	// A negative or zero duration fires the timer immediately.
+	Reset2 func(d time.Duration) bool
 	// 当 timer != nil 的时候, Timer 代表了 real clock
 	timer *time.Timer
 	// TODO: 删除此处内容,使用 Stop2 以后,可以不用保留 task 属性了
@@ -51,6 +59,59 @@ func (m *Mock) Sleep(d time.Duration) {
 	<-m.After(d)
 }
 
+func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
+	c := make(chan time.Time, 1)
+	run := func(t *task) *task {
+		if afterFunc != nil {
+			go afterFunc()
+		} else {
+			// 因为 time.Tick 的处理逻辑也是这样的
+			// 有人收就发过去, 每人接收就丢弃.
+			// 而且 AfterFunc 创建的 *Timer 不会发送 current time
+			select {
+			case c <- m.now:
+			default:
+			}
+		}
+		return nil
+	}
+	t := &Timer{
+		task: newTask2(deadline, run),
+	}
+	if !t.deadline.After(m.now) {
+		t.run()
+	} else {
+		m.push(t.task)
+	}
+	t.Stop2 = func() bool {
+		if t.timer != nil {
+			return t.timer.Stop()
+		}
+		m.Lock()
+		defer m.Unlock()
+		isActive := !t.task.hasStopped()
+		m.remove(t.task)
+		return isActive
+	}
+	t.Reset2 = func(d time.Duration) bool {
+		if t.timer != nil {
+			return t.timer.Reset(d)
+		}
+		m.Lock()
+		defer m.Unlock()
+		m.remove(t.task)
+		isActive := !t.task.hasStopped()
+		t.deadline = m.now.Add(d)
+		if !t.deadline.After(m.now) {
+			t.run()
+		} else {
+			m.push(t.task)
+		}
+		return isActive
+	}
+	return t
+}
+
 func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	t := &Timer{
 		task: newTask(m, deadline),
@@ -79,6 +140,7 @@ func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	return t
 }
 
+// TODO: 删除此处内容
 // Stop prevents the Timer from firing.
 // It returns true if the call stops the timer, false if the timer has already
 // expired or been stopped.
@@ -93,6 +155,7 @@ func (t *Timer) Stop() bool {
 	return wasActive
 }
 
+// TODO: 删除此处内容
 // Reset changes the timer to expire after duration d.
 // It returns true if the timer had been active, false if the timer had
 // expired or been stopped.

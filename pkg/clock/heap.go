@@ -34,7 +34,6 @@ func newTask2(deadline time.Time, runTask func(t *task) *task) *task {
 		deadline: deadline,
 		runTask:  runTask,
 		index:    removed,
-		// isStopped: true,
 	}
 }
 

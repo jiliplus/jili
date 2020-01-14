@@ -31,7 +31,7 @@ type Mock struct {
 	sync.Mutex
 	now time.Time
 	mockTimers
-	taskOrder
+	taskOrder taskOrder
 }
 
 // NewMockClock returns a new Mock with current time set to now.
@@ -104,14 +104,14 @@ func (m *Mock) set(now time.Time) (time.Time, time.Duration) {
 
 func (m *Mock) set2(now time.Time) (time.Time, time.Duration) {
 	last := m.now
-	for m.hasTaskToRun(now) {
-		t := m.pop()
+	for m.taskOrder.hasTaskToRun(now) {
+		t := m.taskOrder.pop()
 		// t.run() 会用到 m.now
 		// 所以,更新一下
 		m.now = t.deadline
 		t = t.run()
 		if t != nil {
-			m.push(t)
+			m.accept(t)
 		}
 	}
 	m.now = now
@@ -158,6 +158,7 @@ func (m *Mock) contextWithDeadline(parent context.Context, deadline time.Time) (
 	if pd, ok := parent.Deadline(); ok && !pd.After(deadline) {
 		return cancelCtx, cancel
 	}
+	// TODO: 把以下代码放入 newMockContext
 	ctx := &mockCtx{
 		Context:  cancelCtx,
 		done:     make(chan struct{}),
@@ -177,26 +178,9 @@ func (m *Mock) contextWithDeadline(parent context.Context, deadline time.Time) (
 	return ctx, cancel
 }
 
-type mockCtx struct {
-	context.Context
-	deadline time.Time
-	done     chan struct{}
-	err      error
-}
-
-func (ctx *mockCtx) Deadline() (time.Time, bool) {
-	return ctx.deadline, true
-}
-
-func (ctx *mockCtx) Done() <-chan struct{} {
-	return ctx.done
-}
-
-func (ctx *mockCtx) Err() error {
-	select {
-	case <-ctx.done:
-		return ctx.err
-	default:
-		return nil
+func (m *Mock) accept(t *task) {
+	if !t.deadline.After(m.now) {
+		t.run()
 	}
+	m.taskOrder.push(t)
 }

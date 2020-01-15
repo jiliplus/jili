@@ -9,7 +9,7 @@ import (
 )
 
 // 本程序验证了 sync.Mutex 会在多个 Lock 请求中，均衡地分配机会
-// 不会出现单个 goroutine 长期联系独占 Lock 的情况。
+// 不会出现单个 goroutine 长期联系独占 mutex 的情况。
 func main() {
 	start := time.Now()
 	var wg sync.WaitGroup

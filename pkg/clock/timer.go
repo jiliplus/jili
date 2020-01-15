@@ -78,7 +78,7 @@ func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
 	t := &Timer{
 		task: newTask2(deadline, run),
 	}
-	m.accept(t.task)
+	m.start(t.task)
 	t.Stop2 = func() bool {
 		if t.timer != nil {
 			return t.timer.Stop()
@@ -98,7 +98,7 @@ func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
 		m.taskOrder.remove(t.task)
 		isActive := !t.task.hasStopped()
 		t.deadline = m.now.Add(d)
-		m.accept(t.task)
+		m.start(t.task)
 		return isActive
 	}
 	return t
@@ -127,7 +127,7 @@ func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	if !t.deadline.After(m.now) {
 		t.fire()
 	} else {
-		m.accept(t.task)
+		m.start(t.task)
 	}
 	return t
 }

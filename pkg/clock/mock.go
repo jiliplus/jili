@@ -2,6 +2,7 @@ package clock
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -108,14 +109,30 @@ func (m *Mock) set2(now time.Time) (time.Time, time.Duration) {
 		t := m.taskOrder.pop()
 		// t.run() 会用到 m.now
 		// 所以,更新一下
+		// FIXME: t.run() 需要修改成 t.run(rightnow)
 		m.now = t.deadline
 		t = t.run()
-		if t != nil {
-			m.accept(t)
-		}
+		m.start(t)
+		m.gosched()
 	}
 	m.now = now
 	return now, now.Sub(last)
+}
+
+// NOTICE: 务必在临界区内运行此方法，否则会 panic。
+// 因为在修改了 mock.now 后，解锁又上锁的操作。
+// 目的是，其他 Goroutine 的 mock.Now() 的操作。
+// 可以在每次更新 mock.now 后，有机会得到执行。
+// 而不是得等到整个 set 函数执行完毕后，才能执行。
+// 当输入参数 now 的值特别大的时候，
+// mock clock 的运行情况更接近 real clock
+// 所以，才必须在临界区内执行
+func (m *Mock) gosched() {
+	m.Unlock()
+	runtime.Gosched()
+	// TODO: 可是，如果这样的话，等 Lock 成功的时候，都不知道时什么时候了。
+	// 比如说，有两个 set2 在运行，情况会时怎么样的呢？
+	m.Lock()
 }
 
 // Now returns the current mocked time.
@@ -178,7 +195,10 @@ func (m *Mock) contextWithDeadline(parent context.Context, deadline time.Time) (
 	return ctx, cancel
 }
 
-func (m *Mock) accept(t *task) {
+func (m *Mock) start(t *task) {
+	if t == nil {
+		return
+	}
 	if !t.deadline.After(m.now) {
 		t.run()
 	}

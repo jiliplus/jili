@@ -52,7 +52,7 @@ func (m *Mock) newTicker(d time.Duration) *Ticker {
 		}
 		return d
 	}
-	m.accept(t.task)
+	m.start(t.task)
 	return t
 }
 
@@ -81,7 +81,7 @@ func (m *Mock) newTicker2(d time.Duration) *Ticker {
 		m.taskOrder.remove(t.task)
 		m.Unlock()
 	}
-	m.accept(t.task)
+	m.start(t.task)
 	return t
 }
 

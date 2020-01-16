@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+type taskManager interface {
+	hasTaskToRun(now time.Time) bool
+	pop() *task
+	push(t *task)
+	remove(t *task)
+}
+
 type task struct {
 	deadline time.Time
 	// fire 是用来区分 task 的上级时 timer 还是 tick

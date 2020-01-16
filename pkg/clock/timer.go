@@ -86,7 +86,7 @@ func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
 		m.Lock()
 		defer m.Unlock()
 		isActive := !t.task.hasStopped()
-		m.taskOrder.remove(t.task)
+		m.taskManager.remove(t.task)
 		return isActive
 	}
 	t.Reset2 = func(d time.Duration) bool {
@@ -95,7 +95,7 @@ func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
 		}
 		m.Lock()
 		defer m.Unlock()
-		m.taskOrder.remove(t.task)
+		m.taskManager.remove(t.task)
 		isActive := !t.task.hasStopped()
 		t.deadline = m.now.Add(d)
 		m.start(t.task)

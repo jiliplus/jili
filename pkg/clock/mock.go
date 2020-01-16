@@ -7,43 +7,37 @@ import (
 	"time"
 )
 
+// Mock 实现了 Clock 接口，并提供了 .Add*，.Set* 和 .Move 方法驱动时钟运行
+//
+// 为了尽可能真实地模拟时间的流逝，Mock.now 只会不断变大，不会出现逆转情况。
+//
+// RWMutex 锁住 Mock 时，其他 goroutine 的 Mock 方法会被阻塞。
+// Mock 的运行也不适均匀的，有可能下一个时刻就是很久以后。
+// 这是与 time 标准库的主要差异，使用 Mock 时，请特别注意。
+//
+type Mock struct {
+	sync.RWMutex
+	now time.Time
+	// TODO: 删除此处内容
+	mockTimers
+	taskManager taskManager
+}
+
+// NewMockClock 返回一个以 now 为当前时间的虚拟时钟。
+// TODO: 删除此处内容
+func NewMockClock(now time.Time) *Mock {
+	return &Mock{
+		now:         now,
+		mockTimers:  &taskHeap{},
+		taskManager: newTaskHeap(),
+	}
+}
+
 type mockTimers interface {
 	start(t *task)
 	stop(t *task)
 	reset(t *task)
 	next() *task
-}
-
-type taskOrder interface {
-	push(t *task)
-	pop() *task
-	hasTaskToRun(now time.Time) bool
-	remove(t *task)
-}
-
-// Mock implements a Clock that only moves with Add, AddNext and Set.
-//
-// The clock can be suspended with Lock and resumed with Unlock.
-// While suspended, all attempts to use the API will block.
-//
-// To increase predictability, all Mock methods acquire
-// and release the Mutex only once during their execution.
-type Mock struct {
-	sync.Mutex
-	now time.Time
-	mockTimers
-	taskOrder taskOrder
-}
-
-// NewMockClock returns a new Mock with current time set to now.
-//
-// Use Realtime to get the real-time Clock.
-func NewMockClock(now time.Time) *Mock {
-	return &Mock{
-		now:        now,
-		mockTimers: &taskHeap{},
-		taskOrder:  newTaskHeap(),
-	}
 }
 
 // Add advances the current time by duration d and fires all expired timers.
@@ -101,22 +95,6 @@ func (m *Mock) set(now time.Time) (time.Time, time.Duration) {
 			m.reset(t)
 		}
 	}
-}
-
-func (m *Mock) set2(now time.Time) (time.Time, time.Duration) {
-	last := m.now
-	for m.taskOrder.hasTaskToRun(now) {
-		t := m.taskOrder.pop()
-		// t.run() 会用到 m.now
-		// 所以,更新一下
-		// FIXME: t.run() 需要修改成 t.run(rightnow)
-		m.now = t.deadline
-		t = t.run()
-		m.start(t)
-		m.gosched()
-	}
-	m.now = now
-	return now, now.Sub(last)
 }
 
 // NOTICE: 务必在临界区内运行此方法，否则会 panic。
@@ -202,5 +180,5 @@ func (m *Mock) start(t *task) {
 	if !t.deadline.After(m.now) {
 		t.run()
 	}
-	m.taskOrder.push(t)
+	m.taskManager.push(t)
 }

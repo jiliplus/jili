@@ -78,7 +78,7 @@ func (m *Mock) newTicker2(d time.Duration) *Ticker {
 			return
 		}
 		m.Lock()
-		m.taskOrder.remove(t.task)
+		m.taskManager.remove(t.task)
 		m.Unlock()
 	}
 	m.start(t.task)

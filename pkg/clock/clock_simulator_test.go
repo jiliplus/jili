@@ -56,6 +56,56 @@ func Test_Simulator_Add_(t *testing.T) {
 	})
 }
 
+func Test_Simulator_Set_(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("使用 Set 把 s 设置为过去的时间", func() {
+			passedTime := s.now.Add(-time.Second)
+			actual := s.Set(passedTime)
+			Convey("s 还是原来时间", func() {
+				So(s.now, ShouldEqual, now)
+				So(actual, ShouldEqual, 0)
+			})
+		})
+		Convey("使用 Set 把 s 设置为当前的时间", func() {
+			actual := s.Set(s.now)
+			Convey("不会改变 s 的时间", func() {
+				So(s.now, ShouldEqual, now)
+				So(actual, ShouldEqual, 0)
+			})
+		})
+		// TODO: 从这里开始
+		Convey("使用 Add 给 s 添加正时间", func() {
+			d := time.Second
+			actual := s.Add(d)
+			expected := now.Add(d)
+			Convey("会改变 s 的时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+		Convey("使用 AddOrPanic 给 s 添加负时间会 panic", func() {
+			So(func() {
+				s.AddOrPanic(-time.Second)
+			}, ShouldPanicWith, timeReversal)
+		})
+		Convey("使用 AddOrPanic 给 s 添加 0 时间", func() {
+			actual := s.AddOrPanic(0)
+			Convey("不会改变 s 的时间", func() {
+				So(actual, ShouldEqual, now)
+			})
+		})
+		Convey("使用 AddOrPanic 给 s 添加正时间", func() {
+			d := time.Second
+			actual := s.AddOrPanic(d)
+			expected := now.Add(d)
+			Convey("会改变 s 的时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+	})
+}
+
 func Test_Simulator_Move(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()

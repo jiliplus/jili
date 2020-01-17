@@ -75,11 +75,12 @@ func (s *Simulator) Move() (time.Time, time.Duration) {
 // Set advances the current time to t and fires all expired timers if s.now <= t
 // else DO NOTHING
 // Returns the advanced duration.
+// NOTICE: 返回 0 还有可能是 t < s.now，不仅仅时 t = s.now
 // 推荐使用 SetOrPanic 替代此方法
 func (s *Simulator) Set(t time.Time) time.Duration {
 	s.Lock()
 	defer s.Unlock()
-	if !s.now.Before(t) {
+	if t.Before(s.now) {
 		return 0
 	}
 	_, d := s.set(t)

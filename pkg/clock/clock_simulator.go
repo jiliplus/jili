@@ -100,6 +100,13 @@ func (s *Simulator) SetOrPanic(t time.Time) time.Duration {
 	return d
 }
 
+// Since returns the time elapsed since t.
+func (s *Simulator) Since(t time.Time) time.Duration {
+	s.Lock()
+	defer s.Unlock()
+	return s.now.Sub(t)
+}
+
 // set 是 Simulator 的核心逻辑，
 // 把 now 时间点之前需要完成的任务，由早到晚依次触发。
 // 一边触发，一边把 t.deadline 设置为 Simulator.now

@@ -7,7 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Test_Simulator_Add_(t *testing.T) {
+func Test_Simulator_Add(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()
 		s := NewSimulator(now)
@@ -34,6 +34,13 @@ func Test_Simulator_Add_(t *testing.T) {
 				So(actual, ShouldEqual, expected)
 			})
 		})
+	})
+}
+
+func Test_Simulator_AddOrPanic(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
 		Convey("使用 AddOrPanic 给 s 添加负时间会 panic", func() {
 			So(func() {
 				s.AddOrPanic(-time.Second)
@@ -56,7 +63,7 @@ func Test_Simulator_Add_(t *testing.T) {
 	})
 }
 
-func Test_Simulator_Set_(t *testing.T) {
+func Test_Simulator_Set(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()
 		s := NewSimulator(now)
@@ -75,32 +82,57 @@ func Test_Simulator_Set_(t *testing.T) {
 				So(actual, ShouldEqual, 0)
 			})
 		})
-		// TODO: 从这里开始
-		Convey("使用 Add 给 s 添加正时间", func() {
+		Convey("使用 Set 把 s 设置为以后的时间", func() {
 			d := time.Second
-			actual := s.Add(d)
-			expected := now.Add(d)
+			expectTime := now.Add(d)
+			actualDur := s.Set(expectTime)
 			Convey("会改变 s 的时间", func() {
-				So(actual, ShouldEqual, expected)
+				So(actualDur, ShouldEqual, d)
+				So(s.now, ShouldEqual, expectTime)
 			})
 		})
-		Convey("使用 AddOrPanic 给 s 添加负时间会 panic", func() {
+	})
+}
+
+func Test_Simulator_SetOrPanic(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("使用 SetOrPanic 把 s 设置为过去的时间，会 panic", func() {
+			passedTime := s.now.Add(-time.Second)
 			So(func() {
-				s.AddOrPanic(-time.Second)
+				s.SetOrPanic(passedTime)
 			}, ShouldPanicWith, timeReversal)
 		})
-		Convey("使用 AddOrPanic 给 s 添加 0 时间", func() {
-			actual := s.AddOrPanic(0)
+		Convey("使用 SetOrPanic 把 s 设置为当前的时间", func() {
+			actualDur := s.SetOrPanic(s.now)
 			Convey("不会改变 s 的时间", func() {
-				So(actual, ShouldEqual, now)
+				So(s.now, ShouldEqual, now)
+				So(actualDur, ShouldEqual, 0)
 			})
 		})
-		Convey("使用 AddOrPanic 给 s 添加正时间", func() {
+		Convey("使用 SetOrPanic 把 s 设置为以后的时间", func() {
 			d := time.Second
-			actual := s.AddOrPanic(d)
-			expected := now.Add(d)
+			expectTime := now.Add(d)
+			actualDur := s.SetOrPanic(expectTime)
 			Convey("会改变 s 的时间", func() {
-				So(actual, ShouldEqual, expected)
+				So(actualDur, ShouldEqual, d)
+				So(s.now, ShouldEqual, expectTime)
+			})
+		})
+	})
+}
+
+func Test_Simulator_Since(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("Since 时间段的起点", func() {
+			expectDur := time.Second
+			startTime := s.now.Add(-expectDur)
+			actualDur := s.Since(startTime)
+			Convey("会得到正确的距离", func() {
+				So(actualDur, ShouldEqual, expectDur)
 			})
 		})
 	})

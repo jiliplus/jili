@@ -10,6 +10,7 @@ require (
 	github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b
 	github.com/aQuaYi/stub v1.1.0
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
+	github.com/agiledragon/gomonkey v2.0.1+incompatible
 	github.com/agrison/go-tablib v0.0.0-20160310143025-4930582c22ee // indirect
 	github.com/agrison/mxj v0.0.0-20160310142625-1269f8afb3b4 // indirect
 	github.com/bearyinnovative/bearychat-go v0.0.0-20181102104846-62b68108f845

@@ -107,7 +107,7 @@ func (h *taskHeap) pop() (t *task) {
 }
 
 func (h taskHeap) hasTaskToRun(now time.Time) bool {
-	return len(h) != 0 && h[0].deadline.Before(now)
+	return len(h) != 0 && !now.Before(h[0].deadline)
 }
 
 func (h *taskHeap) remove(t *task) {

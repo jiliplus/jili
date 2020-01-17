@@ -27,6 +27,7 @@
 		"githooks",
 		"gitignore",
 		"godoc",
+		"gomonkey",
 		"gorm",
 		"gormbulk",
 		"idkey",

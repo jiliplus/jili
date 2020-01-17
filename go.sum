@@ -24,6 +24,8 @@ github.com/adshao/go-binance v0.0.0-20190826155308-2f14b48b64cb h1:hwbqYeHhtY/+y
 github.com/adshao/go-binance v0.0.0-20190826155308-2f14b48b64cb/go.mod h1:Z5RNUOdmzhcVEymtZCuuzSGYMFO2YL8x/X8vGUyz2bc=
 github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0 h1:JIsPrOyAUlEDqoV6FQOIN6AFJ8eKjLIx4xAfhIl1fjk=
 github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0/go.mod h1:Z5RNUOdmzhcVEymtZCuuzSGYMFO2YL8x/X8vGUyz2bc=
+github.com/agiledragon/gomonkey v2.0.1+incompatible h1:DIQT3ZshgGz9pTwBddRSZWDutIRPx2d7UzmjzgWo9q0=
+github.com/agiledragon/gomonkey v2.0.1+incompatible/go.mod h1:2NGfXu1a80LLr2cmWXGBDaHEjb1idR6+FVlX5T3D9hw=
 github.com/agrison/go-tablib v0.0.0-20160310143025-4930582c22ee h1:0RklYSvekYaIFI9JUx7TFPQvo++TdILmZiV17QI4nXk=
 github.com/agrison/go-tablib v0.0.0-20160310143025-4930582c22ee/go.mod h1:M9nmO4lBRWR/bBv7UCOmDJ1MB2DVoqz19B4JchDA+K0=
 github.com/agrison/mxj v0.0.0-20160310142625-1269f8afb3b4 h1:XBNSe5eibe5Fh131ah+xnO6s4A97U1T3tKZKLQQvqu0=

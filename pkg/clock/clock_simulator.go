@@ -16,20 +16,15 @@ import (
 //
 type Simulator struct {
 	sync.RWMutex
-	now         time.Time
-	taskManager taskManager
+	now  time.Time
+	heap *taskHeap
 }
 
 // NewSimulator 返回一个以 now 为当前时间的虚拟时钟。
-func NewSimulator(now time.Time) *Mock {
-	return newSimulator(now, newTaskHeap())
-}
-
-// newSimulator 返回一个以 now 为当前时间的虚拟时钟。
-func newSimulator(now time.Time, tm taskManager) *Mock {
-	return &Mock{
-		now:         now,
-		taskManager: tm,
+func NewSimulator(now time.Time) *Simulator {
+	return &Simulator{
+		now:  now,
+		heap: newTaskHeap(),
 	}
 }
 
@@ -44,32 +39,33 @@ func newSimulator(now time.Time, tm taskManager) *Mock {
 // 只是较小的输入参数 now，可能无法被赋值到 Simulator.now
 func (s *Simulator) set(now time.Time) (time.Time, time.Duration) {
 	last := s.now
-	for s.taskManager.hasTaskToRun(now) {
+	for s.heap.hasTaskToRun(now) {
 		s.accomplishNextTask()
 		s.gosched()
 	}
+	// 如果有多个 goroutine 在并行运行 set 的话。
+	// 由于 s.gosched() 的存在
+	// s.now 有可能已经大于 now 了
+	// 所以此处不能直接使用 s.now = now
 	s.setNowTo(now)
 	return s.now, s.now.Sub(last)
 }
 
 // NOTICE: 务必在临界区内运行此方法，否则会 panic。
-// 因为在修改了 mock.now 后，解锁又上锁的操作。
-// 目的是，其他 Goroutine 的 mock.Now() 的操作。
-// 可以在每次更新 mock.now 后，有机会得到执行。
+// 目的是，其他 Goroutine 的 simulator.Now() 的操作。
+// 可以在每次更新 simulator.now 后，有机会得到执行。
 // 而不是得等到整个 set 函数执行完毕后，才能执行。
 // 当输入参数 now 的值特别大的时候，
-// mock clock 的运行情况更接近 real clock
+// simulator 的运行情况更接近 real clock
 // 所以，才必须在临界区内执行
 func (s *Simulator) gosched() {
 	s.Unlock()
 	runtime.Gosched()
-	// TODO: 可是，如果这样的话，等 Lock 成功的时候，都不知道时什么时候了。
-	// 比如说，有两个 set2 在运行，情况会时怎么样的呢？
 	s.Lock()
 }
 
 func (s *Simulator) accomplishNextTask() {
-	t := s.taskManager.pop()
+	t := s.heap.pop()
 	s.setNowTo(t.deadline)
 	t = t.run()
 	s.start(t)
@@ -80,9 +76,10 @@ func (s *Simulator) start(t *task) {
 		return
 	}
 	if !t.deadline.After(s.now) {
-		t.run()
+		s.start(t.run())
+		return
 	}
-	s.taskManager.push(t)
+	s.heap.push(t)
 }
 
 // setNowTo make m.now equal to t if m.now < t
@@ -91,6 +88,7 @@ func (s *Simulator) setNowTo(t time.Time) {
 	if s.now.Before(t) {
 		// Simulator 的所有方法中，
 		// 应该只有这一处存在 .now =
+		// 需要改变 s.now 的话，就调用此方法。
 		s.now = t
 	}
 }

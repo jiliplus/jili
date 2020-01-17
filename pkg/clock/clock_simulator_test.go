@@ -7,6 +7,123 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func Test_Simulator_set_timerStyle(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		num := 10
+		actualOrder := make([]time.Time, 0, num)
+		expectOrder := make([]time.Time, num)
+		runTask := func(ts *task) *task {
+			actualOrder = append(actualOrder, s.now)
+			return nil
+		}
+		for i := num; i > 0; i-- {
+			deadline := now.Add(time.Duration(i) * time.Second)
+			ts := newTask2(deadline, runTask)
+			s.start(ts)
+			expectOrder[i-1] = deadline
+		}
+		Convey("s.heap 的长度应该等于 count", func() {
+			So(len(*(s.heap)), ShouldEqual, num)
+		})
+		Convey("改变 s 的当前时间", func() {
+			expectDur := time.Second * time.Duration(num)
+			expectTime := now.Add(expectDur)
+			s.Lock()
+			actualTime, actualDur := s.set(expectTime)
+			s.Unlock()
+			Convey("s 被改变，并按照预定的顺序执行", func() {
+				So(actualTime, ShouldEqual, expectTime)
+				So(actualDur, ShouldEqual, expectDur)
+				So(actualOrder, ShouldResemble, expectOrder)
+			})
+		})
+	})
+}
+
+func Test_Simulator_set_tickerStyle(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		num := 10
+		actualOrder := make([]time.Time, 0, num)
+		runTask := func(ts *task) *task {
+			actualOrder = append(actualOrder, s.now)
+			ts.deadline = ts.deadline.Add(time.Second)
+			return ts
+		}
+		deadline := now.Add(time.Second)
+		ts := newTask2(deadline, runTask)
+		s.start(ts)
+		Convey("s.heap 的长度应该等于 1", func() {
+			So(len(*(s.heap)), ShouldEqual, 1)
+		})
+		expectOrder := make([]time.Time, num)
+		for i := 0; i < num; i++ {
+			deadline := now.Add(time.Duration(i+1) * time.Second)
+			expectOrder[i] = deadline
+		}
+		Convey("改变 s 的当前时间", func() {
+			expectDur := time.Second * time.Duration(num)
+			expectTime := now.Add(expectDur)
+			s.Lock()
+			actualTime, actualDur := s.set(expectTime)
+			s.Unlock()
+			Convey("s 被改变，并按照预定的顺序执行", func() {
+				So(actualTime, ShouldEqual, expectTime)
+				So(actualDur, ShouldEqual, expectDur)
+				So(actualOrder, ShouldResemble, expectOrder)
+			})
+		})
+	})
+}
+
+func Test_Simulator_start(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("s.heap 的长度应该为 0", func() {
+			So(len(*(s.heap)), ShouldEqual, 0)
+		})
+		Convey("往 s 中放入 nil task", func() {
+			s.start(nil)
+			Convey("s.heap 的长度还是 0", func() {
+				So(len(*(s.heap)), ShouldEqual, 0)
+			})
+		})
+		isRunned := false
+		ts := &task{}
+		ts.runTask = func(tk *task) *task {
+			isRunned = true
+			return nil
+		}
+		Convey("往 s 中放入过期的 task", func() {
+			passedTime := now.Add(-1 * time.Minute)
+			ts.deadline = passedTime
+			s.start(ts)
+			Convey("s.heap 的长度还是 0", func() {
+				So(len(*(s.heap)), ShouldEqual, 0)
+			})
+			Convey("任务会被执行", func() {
+				So(isRunned, ShouldBeTrue)
+			})
+		})
+		Convey("往 s 中放入未来的 task", func() {
+			future := now.Add(1 * time.Minute)
+			ts.deadline = future
+			s.start(ts)
+			Convey("s.heap 的长度变成 1", func() {
+				So(len(*(s.heap)), ShouldEqual, 1)
+			})
+			Convey("任务不会被执行", func() {
+				So(isRunned, ShouldBeFalse)
+			})
+		})
+	})
+
+}
+
 func Test_Simulator_setNowTo(t *testing.T) {
 	Convey("假设存在模拟器 s", t, func() {
 		now := time.Now()

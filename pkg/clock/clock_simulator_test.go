@@ -7,6 +7,82 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+func Test_Simulator_Add_(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("使用 Add 给 s 添加负时间", func() {
+			expected := s.now
+			d := -time.Second
+			actual := s.Add(d)
+			Convey("s 还是原来时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+		Convey("使用 Add 给 s 添加 0 时间", func() {
+			expected := s.now
+			actual := s.Add(0)
+			Convey("不会改变 s 的时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+		Convey("使用 Add 给 s 添加正时间", func() {
+			d := time.Second
+			actual := s.Add(d)
+			expected := now.Add(d)
+			Convey("会改变 s 的时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+		Convey("使用 AddOrPanic 给 s 添加负时间会 panic", func() {
+			So(func() {
+				s.AddOrPanic(-time.Second)
+			}, ShouldPanicWith, timeReversal)
+		})
+		Convey("使用 AddOrPanic 给 s 添加 0 时间", func() {
+			actual := s.AddOrPanic(0)
+			Convey("不会改变 s 的时间", func() {
+				So(actual, ShouldEqual, now)
+			})
+		})
+		Convey("使用 AddOrPanic 给 s 添加正时间", func() {
+			d := time.Second
+			actual := s.AddOrPanic(d)
+			expected := now.Add(d)
+			Convey("会改变 s 的时间", func() {
+				So(actual, ShouldEqual, expected)
+			})
+		})
+	})
+}
+
+func Test_Simulator_Move(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("让没有 task 的 s Move 一下", func() {
+			expectTime, expectDur := s.now, time.Duration(0)
+			actualTime, actualDur := s.Move()
+			Convey("s 不会发生改变", func() {
+				So(actualTime, ShouldEqual, expectTime)
+				So(actualDur, ShouldEqual, expectDur)
+			})
+		})
+		Convey("给 s 添加 task", func() {
+			expectDur := time.Second
+			expectTime := s.now.Add(expectDur)
+			runTask := func(ts *task) *task { return nil }
+			ts := newTask2(expectTime, runTask)
+			s.start(ts)
+			Convey("让 s Move 一下，会发生改变", func() {
+				actualTime, actualDur := s.Move()
+				So(actualTime, ShouldEqual, expectTime)
+				So(actualDur, ShouldEqual, expectDur)
+			})
+		})
+	})
+}
+
 func Test_Simulator_set_timerStyle(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()

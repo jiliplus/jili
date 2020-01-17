@@ -28,6 +28,77 @@ func NewSimulator(now time.Time) *Simulator {
 	}
 }
 
+// Add advances the current time by duration d and fires all expired timers if d >= 0,
+// else DO NOTHING
+//
+// Returns the current time.
+// 推荐使用 AddOrPanic 替换此方法
+func (s *Simulator) Add(d time.Duration) time.Time {
+	s.Lock()
+	defer s.Unlock()
+	if d < 0 {
+		return s.now
+	}
+	now, _ := s.set(s.now.Add(d))
+	return now
+}
+
+const (
+	timeReversal = "继续执行此操作会导致 Simulator 的时间逆转"
+)
+
+// AddOrPanic advances the current time by duration d and fires all expired timers if d >= 0
+// else panic
+// Returns the new current time.
+func (s *Simulator) AddOrPanic(d time.Duration) time.Time {
+	s.Lock()
+	defer s.Unlock()
+	if d < 0 {
+		panic(timeReversal)
+	}
+	now, _ := s.set(s.now.Add(d))
+	return now
+}
+
+// Move advances the current time to the next available timer deadline
+// Returns the new current time and the advanced duration.
+func (s *Simulator) Move() (time.Time, time.Duration) {
+	s.Lock()
+	defer s.Unlock()
+	last := s.now
+	if s.heap.hasTask() {
+		s.accomplishNextTask()
+	}
+	return s.now, s.now.Sub(last)
+}
+
+// Set advances the current time to t and fires all expired timers if s.now <= t
+// else DO NOTHING
+// Returns the advanced duration.
+// 推荐使用 SetOrPanic 替代此方法
+func (s *Simulator) Set(t time.Time) time.Duration {
+	s.Lock()
+	defer s.Unlock()
+	if !s.now.Before(t) {
+		return 0
+	}
+	_, d := s.set(t)
+	return d
+}
+
+// SetOrPanic advances the current time to t and fires all expired timers if s.now <= t
+// else panic with time reversal
+// Returns the advanced duration.
+func (s *Simulator) SetOrPanic(t time.Time) time.Duration {
+	s.Lock()
+	defer s.Unlock()
+	if t.Before(s.now) {
+		panic(timeReversal)
+	}
+	_, d := s.set(t)
+	return d
+}
+
 // set 是 Simulator 的核心逻辑，
 // 把 now 时间点之前需要完成的任务，由早到晚依次触发。
 // 一边触发，一边把 t.deadline 设置为 Simulator.now

@@ -110,6 +110,10 @@ func (h taskHeap) hasTaskToRun(now time.Time) bool {
 	return len(h) != 0 && !now.Before(h[0].deadline)
 }
 
+func (h taskHeap) hasTask() bool {
+	return len(h) != 0
+}
+
 func (h *taskHeap) remove(t *task) {
 	if !t.hasStopped() {
 		heap.Remove(h, t.index)

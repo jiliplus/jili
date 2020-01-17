@@ -38,5 +38,15 @@
 				"label": ""
 			}
 		]
+	},
+	{
+		"path": "$ROOTPATH$/pkg/clock/clock_simulator.go",
+		"bookmarks": [
+			{
+				"line": 68,
+				"column": 14,
+				"label": ""
+			}
+		]
 	}
 ]

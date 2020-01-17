@@ -15,6 +15,7 @@ import (
 // Mock 的运行也不适均匀的，有可能下一个时刻就是很久以后。
 // 这是与 time 标准库的主要差异，使用 Mock 时，请特别注意。
 //
+// TODO: 删除此处内容
 type Mock struct {
 	sync.RWMutex
 	now time.Time
@@ -33,6 +34,7 @@ func NewMockClock(now time.Time) *Mock {
 	}
 }
 
+// TODO: 删除此处内容
 type mockTimers interface {
 	start(t *task)
 	stop(t *task)
@@ -44,6 +46,7 @@ type mockTimers interface {
 //
 // Returns the new current time.
 // To increase predictability and speed, Tickers are ticked only once per call.
+// TODO: 删除此处内容
 func (m *Mock) Add(d time.Duration) time.Time {
 	m.Lock()
 	defer m.Unlock()
@@ -55,6 +58,7 @@ func (m *Mock) Add(d time.Duration) time.Time {
 // and fires all expired timers.
 //
 // Returns the new current time and the advanced duration.
+// TODO: 删除此处内容
 func (m *Mock) AddNext() (time.Time, time.Duration) {
 	m.Lock()
 	defer m.Unlock()
@@ -69,6 +73,7 @@ func (m *Mock) AddNext() (time.Time, time.Duration) {
 //
 // Returns the advanced duration.
 // To increase predictability and speed, Tickers are ticked only once per call.
+// TODO: 删除此处内容
 func (m *Mock) Set(t time.Time) time.Duration {
 	m.Lock()
 	defer m.Unlock()
@@ -173,6 +178,7 @@ func (m *Mock) contextWithDeadline(parent context.Context, deadline time.Time) (
 	return ctx, cancel
 }
 
+// TODO: 删除此处内容
 func (m *Mock) start(t *task) {
 	if t == nil {
 		return

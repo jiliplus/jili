@@ -28,25 +28,5 @@
 				"label": ""
 			}
 		]
-	},
-	{
-		"path": "$ROOTPATH$/pkg/clock/ticker.go",
-		"bookmarks": [
-			{
-				"line": 80,
-				"column": 0,
-				"label": ""
-			}
-		]
-	},
-	{
-		"path": "$ROOTPATH$/pkg/clock/clock_simulator.go",
-		"bookmarks": [
-			{
-				"line": 68,
-				"column": 14,
-				"label": ""
-			}
-		]
 	}
 ]

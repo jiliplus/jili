@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	timeReversal = "继续执行此操作会导致 Simulator 的时间逆转"
+)
+
 // Simulator 实现了 Clock 接口，并提供了 .Add*，.Set* 和 .Move 方法驱动时钟运行
 //
 // 为了尽可能真实地模拟时间的流逝，Simulator.now 只会不断变大，不会出现逆转情况。
@@ -42,10 +46,6 @@ func (s *Simulator) Add(d time.Duration) time.Time {
 	now, _ := s.set(s.now.Add(d))
 	return now
 }
-
-const (
-	timeReversal = "继续执行此操作会导致 Simulator 的时间逆转"
-)
 
 // AddOrPanic advances the current time by duration d and fires all expired timers if d >= 0
 // else panic
@@ -107,6 +107,51 @@ func (s *Simulator) Since(t time.Time) time.Duration {
 	return s.now.Sub(t)
 }
 
+// Until returns the duration until t.
+func (s *Simulator) Until(t time.Time) time.Duration {
+	s.Lock()
+	defer s.Unlock()
+	return t.Sub(s.now)
+}
+
+// // ContextWithDeadline implements Clock.
+// func (s *Simulator) ContextWithDeadline(parent context.Context, d time.Time) (context.Context, context.CancelFunc) {
+// 	s.Lock()
+// 	defer s.Unlock()
+// 	return s.contextWithDeadline(parent, d)
+// }
+
+// // ContextWithTimeout implements Clock.
+// func (s *Simulator) ContextWithTimeout(parent context.Context, timeout time.Duration) (context.Context, context.CancelFunc) {
+// 	s.Lock()
+// 	defer s.Unlock()
+// 	return s.contextWithDeadline(parent, s.now.Add(timeout))
+// }
+// func (s *Simulator) contextWithDeadline(parent context.Context, deadline time.Time) (context.Context, context.CancelFunc) {
+// 	cancelCtx, cancel := context.WithCancel(Set(parent, s))
+// 	if pd, ok := parent.Deadline(); ok && !pd.After(deadline) {
+// 		return cancelCtx, cancel
+// 	}
+// 	// TODO: 把以下代码放入 newMockContext
+// 	ctx := &mockCtx{
+// 		Context:  cancelCtx,
+// 		done:     make(chan struct{}),
+// 		deadline: deadline,
+// 	}
+// 	t := s.newTimerFunc(deadline, nil)
+// 	go func() {
+// 		select {
+// 		case <-t.C:
+// 			ctx.err = context.DeadlineExceeded
+// 		case <-cancelCtx.Done():
+// 			ctx.err = cancelCtx.Err()
+// 			defer t.Stop()
+// 		}
+// 		close(ctx.done)
+// 	}()
+// 	return ctx, cancel
+// }
+
 // set 是 Simulator 的核心逻辑，
 // 把 now 时间点之前需要完成的任务，由早到晚依次触发。
 // 一边触发，一边把 t.deadline 设置为 Simulator.now
@@ -118,7 +163,7 @@ func (s *Simulator) Since(t time.Time) time.Duration {
 // 只是较小的输入参数 now，可能无法被赋值到 Simulator.now
 func (s *Simulator) set(now time.Time) (time.Time, time.Duration) {
 	last := s.now
-	for s.heap.hasTaskToRun(now) {
+	for s.heap.hasExpiredTask(now) {
 		s.accomplishNextTask()
 		s.gosched()
 	}
@@ -145,17 +190,19 @@ func (s *Simulator) gosched() {
 
 func (s *Simulator) accomplishNextTask() {
 	t := s.heap.pop()
+	// 因为有可能 task 在放入 heap 的时候，就已经过期了，
+	// 为了防止时间逆转
+	// 不能直接设置 s.now = t.deadline
 	s.setNowTo(t.deadline)
 	t = t.run()
-	s.start(t)
+	s.accept(t)
 }
 
-func (s *Simulator) start(t *task) {
+// accept 把 not nil 的任务放入自己的 heap。
+// 这里只需要检查 t 是否为 nil, 不会触发过期的 task。
+// 把触发工作全部丢给 s.accomplishNextTask 去完成。
+func (s *Simulator) accept(t *task) {
 	if t == nil {
-		return
-	}
-	if !t.deadline.After(s.now) {
-		s.start(t.run())
 		return
 	}
 	s.heap.push(t)

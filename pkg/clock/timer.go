@@ -59,51 +59,6 @@ func (m *Mock) Sleep(d time.Duration) {
 	<-m.After(d)
 }
 
-func (m *Mock) newTimerFunc2(deadline time.Time, afterFunc func()) *Timer {
-	c := make(chan time.Time, 1)
-	run := func(t *task) *task {
-		if afterFunc != nil {
-			go afterFunc()
-		} else {
-			// 因为 time.Tick 的处理逻辑也是这样的
-			// 有人收就发过去, 每人接收就丢弃.
-			// 而且 AfterFunc 创建的 *Timer 不会发送 current time
-			select {
-			case c <- m.now:
-			default:
-			}
-		}
-		return nil
-	}
-	t := &Timer{
-		task: newTask2(deadline, run),
-	}
-	m.start(t.task)
-	t.Stop2 = func() bool {
-		if t.timer != nil {
-			return t.timer.Stop()
-		}
-		m.Lock()
-		defer m.Unlock()
-		isActive := !t.task.hasStopped()
-		m.taskManager.remove(t.task)
-		return isActive
-	}
-	t.Reset2 = func(d time.Duration) bool {
-		if t.timer != nil {
-			return t.timer.Reset(d)
-		}
-		m.Lock()
-		defer m.Unlock()
-		m.taskManager.remove(t.task)
-		isActive := !t.task.hasStopped()
-		t.deadline = m.now.Add(d)
-		m.start(t.task)
-		return isActive
-	}
-	return t
-}
-
 func (m *Mock) newTimerFunc(deadline time.Time, afterFunc func()) *Timer {
 	t := &Timer{
 		task: newTask(m, deadline),

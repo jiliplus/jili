@@ -138,6 +138,21 @@ func Test_Simulator_Since(t *testing.T) {
 	})
 }
 
+func Test_Simulator_Until(t *testing.T) {
+	Convey("新建模拟器 s", t, func() {
+		now := time.Now()
+		s := NewSimulator(now)
+		Convey("Until 时间段的终点", func() {
+			expectDur := time.Second
+			startTime := s.now.Add(expectDur)
+			actualDur := s.Until(startTime)
+			Convey("会得到正确的距离", func() {
+				So(actualDur, ShouldEqual, expectDur)
+			})
+		})
+	})
+}
+
 func Test_Simulator_Move(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()
@@ -155,7 +170,7 @@ func Test_Simulator_Move(t *testing.T) {
 			expectTime := s.now.Add(expectDur)
 			runTask := func(ts *task) *task { return nil }
 			ts := newTask2(expectTime, runTask)
-			s.start(ts)
+			s.accept(ts)
 			Convey("让 s Move 一下，会发生改变", func() {
 				actualTime, actualDur := s.Move()
 				So(actualTime, ShouldEqual, expectTime)
@@ -179,7 +194,7 @@ func Test_Simulator_set_timerStyle(t *testing.T) {
 		for i := num; i > 0; i-- {
 			deadline := now.Add(time.Duration(i) * time.Second)
 			ts := newTask2(deadline, runTask)
-			s.start(ts)
+			s.accept(ts)
 			expectOrder[i-1] = deadline
 		}
 		Convey("s.heap 的长度应该等于 count", func() {
@@ -213,7 +228,7 @@ func Test_Simulator_set_tickerStyle(t *testing.T) {
 		}
 		deadline := now.Add(time.Second)
 		ts := newTask2(deadline, runTask)
-		s.start(ts)
+		s.accept(ts)
 		Convey("s.heap 的长度应该等于 1", func() {
 			So(len(*(s.heap)), ShouldEqual, 1)
 		})
@@ -237,7 +252,7 @@ func Test_Simulator_set_tickerStyle(t *testing.T) {
 	})
 }
 
-func Test_Simulator_start(t *testing.T) {
+func Test_Simulator_accept(t *testing.T) {
 	Convey("新建模拟器 s", t, func() {
 		now := time.Now()
 		s := NewSimulator(now)
@@ -245,7 +260,7 @@ func Test_Simulator_start(t *testing.T) {
 			So(len(*(s.heap)), ShouldEqual, 0)
 		})
 		Convey("往 s 中放入 nil task", func() {
-			s.start(nil)
+			s.accept(nil)
 			Convey("s.heap 的长度还是 0", func() {
 				So(len(*(s.heap)), ShouldEqual, 0)
 			})
@@ -259,18 +274,18 @@ func Test_Simulator_start(t *testing.T) {
 		Convey("往 s 中放入过期的 task", func() {
 			passedTime := now.Add(-1 * time.Minute)
 			ts.deadline = passedTime
-			s.start(ts)
-			Convey("s.heap 的长度还是 0", func() {
-				So(len(*(s.heap)), ShouldEqual, 0)
+			s.accept(ts)
+			Convey("s.heap 的长度是 1", func() {
+				So(len(*(s.heap)), ShouldEqual, 1)
 			})
-			Convey("任务会被执行", func() {
-				So(isRunned, ShouldBeTrue)
+			Convey("任务不会被执行", func() {
+				So(isRunned, ShouldBeFalse)
 			})
 		})
 		Convey("往 s 中放入未来的 task", func() {
 			future := now.Add(1 * time.Minute)
 			ts.deadline = future
-			s.start(ts)
+			s.accept(ts)
 			Convey("s.heap 的长度变成 1", func() {
 				So(len(*(s.heap)), ShouldEqual, 1)
 			})

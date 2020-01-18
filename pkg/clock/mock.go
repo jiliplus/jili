@@ -125,8 +125,8 @@ func (m *Mock) Now() time.Time {
 	return m.now
 }
 
-// TODO: 删除此处内容
 // Since returns the time elapsed since t.
+// TODO: 删除此处内容
 func (m *Mock) Since(t time.Time) time.Duration {
 	m.Lock()
 	defer m.Unlock()
@@ -134,6 +134,7 @@ func (m *Mock) Since(t time.Time) time.Duration {
 }
 
 // Until returns the duration until t.
+// TODO: 删除此处内容
 func (m *Mock) Until(t time.Time) time.Duration {
 	m.Lock()
 	defer m.Unlock()

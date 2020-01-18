@@ -106,7 +106,12 @@ func (h *taskHeap) pop() (t *task) {
 	return
 }
 
+// TODO: 删除此处内容
 func (h taskHeap) hasTaskToRun(now time.Time) bool {
+	return len(h) != 0 && !now.Before(h[0].deadline)
+}
+
+func (h taskHeap) hasExpiredTask(now time.Time) bool {
 	return len(h) != 0 && !now.Before(h[0].deadline)
 }
 

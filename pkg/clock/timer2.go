@@ -20,6 +20,13 @@ type Timer2 struct {
 	Reset func(d time.Duration) bool
 }
 
+// Sleep pauses the current goroutine for at least the duration d.
+//
+// A negative or zero duration causes Sleep to return immediately.
+func (s *Simulator) Sleep(d time.Duration) {
+	<-s.After(d)
+}
+
 // After waits for the duration to elapse and then sends the current time on
 // the returned channel.
 //
@@ -46,13 +53,6 @@ func (s *Simulator) NewTimer(d time.Duration) *Timer2 {
 	s.Lock()
 	defer s.Unlock()
 	return s.newTimerFunc(s.now.Add(d), nil)
-}
-
-// Sleep pauses the current goroutine for at least the duration d.
-//
-// A negative or zero duration causes Sleep to return immediately.
-func (s *Simulator) Sleep(d time.Duration) {
-	<-s.After(d)
 }
 
 //

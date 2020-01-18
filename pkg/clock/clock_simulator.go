@@ -32,6 +32,13 @@ func NewSimulator(now time.Time) *Simulator {
 	}
 }
 
+// Now returns the current time.
+func (s *Simulator) Now() time.Time {
+	s.RLock()
+	defer s.RUnlock()
+	return s.now
+}
+
 // Add advances the current time by duration d and fires all expired timers if d >= 0,
 // else DO NOTHING
 //

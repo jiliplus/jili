@@ -5,25 +5,25 @@
 
 <p align="center">
 <!--  -->
-<a href="https://github.com/aQuaYi/jili/releases"> <img src="https://img.shields.io/github/v/release/aQuaYi/jili?include_prereleases" alt="Release" title="Release"></a>
+<a href="https://github.com/jujili/jili/releases"> <img src="https://img.shields.io/github/v/release/jujili/jili?include_prereleases" alt="Release" title="Release"></a>
 <!--  -->
-<a href="https://www.travis-ci.org/aQuaYi/jili"><img src="https://www.travis-ci.org/aQuaYi/jili.svg?branch=master"/></a>
+<a href="https://www.travis-ci.org/jujili/jili"><img src="https://www.travis-ci.org/jujili/jili.svg?branch=master"/></a>
 <!--  -->
-<a href="https://codecov.io/gh/aQuaYi/jili"><img src="https://codecov.io/gh/aQuaYi/jili/branch/master/graph/badge.svg"/></a>
+<a href="https://codecov.io/gh/jujili/jili"><img src="https://codecov.io/gh/jujili/jili/branch/master/graph/badge.svg"/></a>
 <!--  -->
-<a href="https://goreportcard.com/report/github.com/aQuaYi/jili"><img src="https://goreportcard.com/badge/github.com/aQuaYi/jili" alt="Go Report Card" title="Go Report Card"/></a>
+<a href="https://goreportcard.com/report/github.com/jujili/jili"><img src="https://goreportcard.com/badge/github.com/jujili/jili" alt="Go Report Card" title="Go Report Card"/></a>
 <!--  -->
-<a href="http://godoc.org/github.com/aQuaYi/jili"><img src="https://img.shields.io/badge/godoc-reference-blue.svg" alt="Go Doc" title="Go Doc"/></a>
+<a href="http://godoc.org/github.com/jujili/jili"><img src="https://img.shields.io/badge/godoc-reference-blue.svg" alt="Go Doc" title="Go Doc"/></a>
 <!--  -->
 <br/>
 <!--  -->
-<a href="https://github.com/aQuaYi/jili/blob/master/docs/CHANGELOG.md"><img src="https://img.shields.io/badge/Change-Log-blueviolet.svg" alt="Change Log" title="Change Log"/></a>
+<a href="https://github.com/jujili/jili/blob/master/docs/CHANGELOG.md"><img src="https://img.shields.io/badge/Change-Log-blueviolet.svg" alt="Change Log" title="Change Log"/></a>
 <!--  -->
-<a href="https://github.com/aQuaYi/jili/blob/master/docs/DIARY.md"><img src="https://img.shields.io/badge/Dev-Diary-blue.svg" alt="Developer Diary" title="Developer Diary"/></a>
+<a href="https://github.com/jujili/jili/blob/master/docs/DIARY.md"><img src="https://img.shields.io/badge/Dev-Diary-blue.svg" alt="Developer Diary" title="Developer Diary"/></a>
 <!--  -->
 <a href="https://golang.google.cn"><img src="https://img.shields.io/badge/Go-1.13+-blue.svg" alt="Go Version" title="Go Version"/></a>
 <!--  -->
-<a href="https://github.com/aQuaYi/jili/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" title="MIT License"/></a>
+<a href="https://github.com/jujili/jili/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" title="MIT License"/></a>
 <!--  -->
 <br/>
 <!--  -->
@@ -41,7 +41,6 @@
 - [jili 交流群](#jili-%e4%ba%a4%e6%b5%81%e7%be%a4)
 - [微信公众号](#%e5%be%ae%e4%bf%a1%e5%85%ac%e4%bc%97%e5%8f%b7)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
-- [License](#license)
 
 ## 开发计划
 
@@ -70,7 +69,3 @@
 ## 项目名称的含义
 
 **jili** 是**激励**，也是**极**大**力**量，还是**极**高**利**润，最重要的是图个**吉利**。
-
-## License
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FaQuaYi%2Fjili.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FaQuaYi%2Fjili?ref=badge_large)

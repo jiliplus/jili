@@ -38,7 +38,6 @@
 - [开发计划](#%e5%bc%80%e5%8f%91%e8%ae%a1%e5%88%92)
 - [功能](#%e5%8a%9f%e8%83%bd)
 	- [命令](#%e5%91%bd%e4%bb%a4)
-	- [模块](#%e6%a8%a1%e5%9d%97)
 - [jili 交流群](#jili-%e4%ba%a4%e6%b5%81%e7%be%a4)
 - [微信公众号](#%e5%be%ae%e4%bf%a1%e5%85%ac%e4%bc%97%e5%8f%b7)
 - [项目名称的含义](#%e9%a1%b9%e7%9b%ae%e5%90%8d%e7%a7%b0%e7%9a%84%e5%90%ab%e4%b9%89)
@@ -53,10 +52,6 @@
 ### [命令](cmd)
 
 - [Binance](cmd/binance/README.md): 下载 Binance 的历史交易数据。
-
-### [模块](pkg)
-
-- [bucket](pkg/bucket/README.md): 两级 Token Bucket 算法令牌桶。
 
 ## jili 交流群
 

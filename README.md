@@ -21,7 +21,7 @@
 <!--  -->
 <a href="https://github.com/jujili/jili/blob/master/docs/DIARY.md"><img src="https://img.shields.io/badge/Dev-Diary-blue.svg" alt="Developer Diary" title="Developer Diary"/></a>
 <!--  -->
-<a href="https://golang.google.cn"><img src="https://img.shields.io/badge/Go-1.13+-blue.svg" alt="Go Version" title="Go Version"/></a>
+<a href="https://golang.google.cn"><img src="https://img.shields.io/github/go-mod/go-version/jujili/jili" alt="Go Version" title="Go Version"/></a
 <!--  -->
 <a href="https://github.com/jujili/jili/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" title="MIT License"/></a>
 <!--  -->

@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
-
 func main() {
-	fmt.Println("hello, world.")
+	srcName := "./data/btcusdt.sqlite3"
+	//
+	db := openToMemory(srcName)
+	defer db.Close()
+	//
+	tickSrc(db, nil)
 }

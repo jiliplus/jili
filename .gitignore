@@ -26,3 +26,6 @@
 # 不保存数据库文件
 *.sqlite3
 *.sqlite3*
+
+# 不跟踪 data 目录
+data

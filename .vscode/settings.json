@@ -27,6 +27,7 @@
 		"dones",
 		"githooks",
 		"gitignore",
+		"gochannel",
 		"godoc",
 		"gomonkey",
 		"gorm",

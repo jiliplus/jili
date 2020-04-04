@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/ThreeDotsLabs/watermill"
@@ -11,37 +12,41 @@ import (
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
 )
 
+// TOPIC 定义了双方的话题
+const TOPIC = "example.topic"
+
 func main() {
 	pubSub := gochannel.NewGoChannel(
 		gochannel.Config{},
 		watermill.NewStdLogger(false, false),
 	)
 
-	messages, err := pubSub.Subscribe(context.Background(), "example.topic")
+	messages, err := pubSub.Subscribe(context.Background(), TOPIC)
 	if err != nil {
 		panic(err)
 	}
 
-	go process(messages)
+	go publishMessages(pubSub)
 
-	publishMessages(pubSub)
+	process(messages)
 }
 
 func publishMessages(publisher message.Publisher) {
-	for {
-		msg := message.NewMessage(watermill.NewUUID(), []byte("Hello, world!"))
+	for i := 0; i < 10; i++ {
+		msg := message.NewMessage(strconv.Itoa(i), []byte("Hello, world!"))
 
-		if err := publisher.Publish("example.topic", msg); err != nil {
+		if err := publisher.Publish(TOPIC, msg); err != nil {
 			panic(err)
 		}
-
-		time.Sleep(time.Second)
+		log.Printf("\tsended message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+		time.Sleep(time.Second * 2)
 	}
+	publisher.Close()
 }
 
 func process(messages <-chan *message.Message) {
 	for msg := range messages {
-		log.Printf("received message: %s, payload: %s", msg.UUID, string(msg.Payload))
+		log.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
 
 		// we need to Acknowledge that we received and processed the message,
 		// otherwise, it will be resent over and over again.

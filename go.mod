@@ -7,6 +7,7 @@ require (
 	github.com/Chronokeeper/anyxml v0.0.0-20160530174208-54457d8e98c6 // indirect
 	github.com/CloudyKit/fastprinter v0.0.0-20170127035650-74b38d55f37a // indirect
 	github.com/CloudyKit/jet v2.1.2+incompatible // indirect
+	github.com/ThreeDotsLabs/watermill v1.1.1
 	github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b
 	github.com/aQuaYi/stub v1.1.0
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0

@@ -33,20 +33,23 @@ func main() {
 
 func publishMessages(publisher message.Publisher) {
 	for i := 0; i < 10; i++ {
-		msg := message.NewMessage(strconv.Itoa(i), []byte("Hello, world!"))
+		msg := message.NewMessage(strconv.Itoa(i), []byte("Hi, world!"))
 
 		if err := publisher.Publish(TOPIC, msg); err != nil {
 			panic(err)
 		}
-		log.Printf("\tsended message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
-		time.Sleep(time.Second * 2)
+		log.Printf("\tsended message\t: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+
+		time.Sleep(time.Second * 1)
+
 	}
 	publisher.Close()
 }
 
 func process(messages <-chan *message.Message) {
 	for msg := range messages {
-		log.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+
+		log.Printf("received message\t: %s, payload: %s\n", msg.UUID, string(msg.Payload))
 
 		// we need to Acknowledge that we received and processed the message,
 		// otherwise, it will be resent over and over again.

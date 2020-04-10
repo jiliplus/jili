@@ -16,41 +16,69 @@ import (
 const TOPIC = "example.topic"
 
 func main() {
-	pubSub := gochannel.NewGoChannel(
-		gochannel.Config{},
+	pubsub := gochannel.NewGoChannel(
+		gochannel.Config{
+			// OutputChannelBuffer:            10,
+			BlockPublishUntilSubscriberAck: true,
+		},
 		watermill.NewStdLogger(false, false),
 	)
 
-	messages, err := pubSub.Subscribe(context.Background(), TOPIC)
-	if err != nil {
-		panic(err)
-	}
+	// messages, err := pubsub.Subscribe(context.Background(), TOPIC)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// go process(messages)
 
-	go publishMessages(pubSub)
+	go subscribe(1, pubsub)
+	go subscribe2(2, pubsub)
 
-	process(messages)
+	publishMessages(pubsub)
+
+	// pubsub.Close()
 }
 
 func publishMessages(publisher message.Publisher) {
 	for i := 0; i < 10; i++ {
 		msg := message.NewMessage(strconv.Itoa(i), []byte("Hi, world!"))
-
 		if err := publisher.Publish(TOPIC, msg); err != nil {
 			panic(err)
 		}
 		log.Printf("\tsended message\t: %s, payload: %s\n", msg.UUID, string(msg.Payload))
 
 		time.Sleep(time.Second * 1)
-
 	}
-	publisher.Close()
 }
 
-func process(messages <-chan *message.Message) {
+// func process(messages <-chan *message.Message) {
+// 	for msg := range messages {
+// 		log.Printf("received message\t: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+// 		// we need to Acknowledge that we received and processed the message,
+// 		// otherwise, it will be resent over and over again.
+// 		msg.Ack()
+// 	}
+// }
+
+func subscribe(id int, pub message.Subscriber) {
+	messages, err := pub.Subscribe(context.Background(), TOPIC)
+	if err != nil {
+		panic(err)
+	}
 	for msg := range messages {
+		log.Printf("%d,received message\t: %s, payload: %s\n", id, msg.UUID, string(msg.Payload))
+		// we need to Acknowledge that we received and processed the message,
+		// otherwise, it will be resent over and over again.
+		msg.Ack()
+	}
+}
 
-		log.Printf("received message\t: %s, payload: %s\n", msg.UUID, string(msg.Payload))
-
+func subscribe2(id int, pub message.Subscriber) {
+	messages, err := pub.Subscribe(context.Background(), TOPIC)
+	if err != nil {
+		panic(err)
+	}
+	for msg := range messages {
+		log.Printf("%d,received message\t: %s, payload: %s\n", id, msg.UUID, string(msg.Payload))
 		// we need to Acknowledge that we received and processed the message,
 		// otherwise, it will be resent over and over again.
 		msg.Ack()

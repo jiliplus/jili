@@ -26,6 +26,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/pelletier/go-toml v1.6.0
 	github.com/prashantv/gostub v1.0.0
+	github.com/renstrom/shortuuid v3.0.0+incompatible // indirect
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/stretchr/testify v1.4.0

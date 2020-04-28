@@ -25,7 +25,11 @@ func newAsset(initailFree float64) *asset {
 	}
 }
 
+// TODO: 添加 tick 的属性
 type tick struct {
+	ID     int64
+	Price  float64
+	Amount float64
 }
 
 type pubsub interface {
@@ -37,17 +41,17 @@ type pubsub interface {
 type order struct {
 	ID int64
 	// TODO: 把 OrderType 的 string 转变成枚举
-	Type            string
-	Price, Quantity float64
-	Next            *order
+	Type          string
+	Price, Amount float64
+	Next          *order
 }
 
 func newOrder(id int64, orderType string, price, quantity float64) *order {
 	return &order{
-		ID:       id,
-		Type:     orderType,
-		Price:    price,
-		Quantity: quantity,
+		ID:     id,
+		Type:   orderType,
+		Price:  price,
+		Amount: quantity,
 	}
 }
 
@@ -98,7 +102,8 @@ func (o *sellOrders) cancelAll() {
 }
 
 func (o *sellOrders) canSell(price float64) bool {
-	return o.head.Next.Price <= price
+	return o.head.Next != nil &&
+		o.head.Next.Price <= price
 }
 
 type buyOrders struct {
@@ -158,22 +163,28 @@ func newExchange(ctx context.Context, source <-chan tick, pubsub pubsub, initial
 	}
 
 	// 跑一个虚拟的盘口
-
 	go func() {
+		// about order
 		getOrder, err := pubsub.Subscribe("order")
 		if err != nil {
 			panic("pubsub.Subscribe(order) error" + err.Error())
 		}
 		var orderBuf bytes.Buffer
 		orderDec := gob.NewDecoder(&orderBuf)
-
 		sellOrders, buyOrders := newSellOrders(), newBuyOrders()
+		// about tick
+		getTick, err := pubsub.Subscribe("tick")
+		if err != nil {
+			panic("pubsub.Subscribe(tick) error" + err.Error())
+		}
+		var tickBuf bytes.Buffer
+		tickDec := gob.NewDecoder(&tickBuf)
 		for {
 			select {
 			case <-exCtx.Done():
 				log.Println("ctx done.")
 			case msg := <-getOrder:
-				// TODO: 把这里相关的部分，写成闭包
+				// TODO: 把 order 的处理方式写成闭包
 				orderBuf.Write(msg.Payload)
 				var order order
 				if err := orderDec.Decode(&order); err != nil {
@@ -187,9 +198,67 @@ func newExchange(ctx context.Context, source <-chan tick, pubsub pubsub, initial
 				default:
 					log.Fatal("出现了错误的 order type")
 				}
+			case msg := <-getTick:
+				// TODO: 把 tick 的处理方式写成闭包
+				tickBuf.Write(msg.Payload)
+				var tick tick
+				if err := tickDec.Decode(&tick); err != nil {
+					log.Fatal("decode order error:", err)
+				}
+				for tick.Amount != 0 && sellOrders.canSell(tick.Price) {
+					order := sellOrders.pop()
+					var trade Trade
+					// 此时 order.Price >= tick.Price
+					// 选用 tick.Price 的原因是为了得到更悲观的结果。
+					// 因为没有盘口信息，所以无法根据订单的类型选择正确的成交价格。
+					trade.Price = tick.Price
+					if order.Amount > tick.Amount {
+						trade.Amount = tick.Amount
+						// 把没有执行完的订单，放回去
+						order.Amount -= tick.Amount
+						sellOrders.push(order)
+					} else {
+						trade.Amount = order.Amount
+					}
+					// 更新 tick 的信息，以便下一轮判断是否能够执行。
+					tick.Amount -= trade.Amount
+					// TODO: 更新交易所内的个人帐户信息
+					// TODO: 发布成交信息
+				}
+				for tick.Amount != 0 && buyOrders.canBuy(tick.Price) {
+					order := buyOrders.pop()
+					var trade Trade
+					// 此时 order.Price <= tick.Price
+					// 选用 tick.Price 的原因是为了得到更悲观的结果。
+					// 因为没有盘口信息，所以无法根据订单的类型选择正确的成交价格。
+					trade.Price = order.Price
+					if order.Amount > tick.Amount {
+						trade.Amount = tick.Amount
+						// 把没有执行完的订单，放回去
+						order.Amount -= tick.Amount
+						buyOrders.push(order)
+					} else {
+						trade.Amount = order.Amount
+					}
+					// 更新 tick 的信息，以便下一轮判断是否能够执行。
+					tick.Amount -= trade.Amount
+					// TODO: 更新交易所内的个人帐户信息
+					// TODO: 发布成交信息
+				}
 			}
 		}
 	}()
 
 	return ex
+}
+
+// Trade 是交易记录
+type Trade struct {
+	ID            int64
+	Price, Amount float64
+}
+
+// Run TODO: 从数据库读取数据，并逐条发送到 pubsub
+func (ex *exchange) Run(ctx context.Context, source <-chan tick, pubsub pubsub) {
+
 }

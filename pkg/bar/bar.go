@@ -12,7 +12,7 @@ type Bar struct {
 	Open, High, Low, Close float64
 	Volume                 float64
 	// 以下属性可以通过其他方式获取
-	// 不用保存在数据库中
+	// 为了节约空间，不要保存在数据库中
 	Symbol   string
 	Exchange name.Exchange
 	Interval time.Duration

@@ -6,7 +6,7 @@ import (
 
 	"github.com/pelletier/go-toml"
 
-	"github.com/aQuaYi/jili/internal/pkg/tools"
+	"github.com/jujili/jili/internal/pkg/tools"
 )
 
 const (

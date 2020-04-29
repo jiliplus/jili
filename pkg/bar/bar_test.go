@@ -16,9 +16,9 @@ func Test_newBar(t *testing.T) {
 
 	bar := newBar(now, ticks)
 
-	ast.Equal(now, bar.begin)
-	ast.Equal(open, bar.open)
-	ast.Equal(high, bar.high)
-	ast.Equal(low, bar.low)
-	ast.Equal(close, bar.close)
+	ast.Equal(now, bar.Begin)
+	ast.Equal(open, bar.Open)
+	ast.Equal(high, bar.High)
+	ast.Equal(low, bar.Low)
+	ast.Equal(close, bar.Close)
 }

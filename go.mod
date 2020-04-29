@@ -21,6 +21,7 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20191106031601-ce3c9ade29de // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/jinzhu/gorm v1.9.11
+	github.com/jujili/exchange v0.0.0 // indirect
 	github.com/markcheno/go-quote v0.0.0-20191213010133-318ed70f5b44
 	github.com/markcheno/go-talib v0.0.0-20190307022042-cd53a9264d70
 	github.com/mattn/go-sqlite3 v1.11.0

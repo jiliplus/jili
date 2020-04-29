@@ -1,8 +1,10 @@
 package main
 
-import "github.com/aQuaYi/jili/internal/pkg/beary"
+import (
+	"time"
 
-import "time"
+	"github.com/jujili/jili/internal/pkg/beary"
+)
 
 func main() {
 	c := beary.NewChannel()

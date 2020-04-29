@@ -7,9 +7,11 @@ import (
 
 	"github.com/adshao/go-binance"
 	"github.com/jinzhu/gorm"
+
+	// 引入 sqlite
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/aQuaYi/jili/internal/pkg/beary"
+	"github.com/jujili/jili/internal/pkg/beary"
 )
 
 const (

@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pelletier/go-toml"
 
-	"github.com/aQuaYi/jili/internal/pkg/beary"
+	"github.com/jujili/jili/internal/pkg/beary"
 )
 
 // TODO: 把 init 还原到 main.go

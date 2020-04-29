@@ -151,7 +151,8 @@ func (o *buyOrders) cancelAll() {
 }
 
 func (o *buyOrders) canBuy(price float64) bool {
-	return o.head.Next.Price >= price
+	return o.head.Next != nil &&
+		o.head.Next.Price >= price
 }
 
 func newExchange(ctx context.Context, source <-chan tick, pubsub pubsub, initialMoney float64) *exchange {

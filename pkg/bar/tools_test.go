@@ -1,4 +1,4 @@
-package kline
+package bar
 
 import (
 	"testing"

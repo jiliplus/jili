@@ -112,25 +112,25 @@ func newSymbolQueue(symbols []string) *symbolQueue {
 	return &res
 }
 
-func (rs symbolQueue) Len() int { return len(rs) }
+func (sq symbolQueue) Len() int { return len(sq) }
 
-func (rs symbolQueue) Less(i, j int) bool {
-	return rs[i].utc < rs[j].utc
+func (sq symbolQueue) Less(i, j int) bool {
+	return sq[i].utc < sq[j].utc
 }
 
-func (rs symbolQueue) Swap(i, j int) {
-	rs[i], rs[j] = rs[j], rs[i]
+func (sq symbolQueue) Swap(i, j int) {
+	sq[i], sq[j] = sq[j], sq[i]
 }
 
 // Push 往 rs 中放 record
-func (rs *symbolQueue) Push(x interface{}) {
+func (sq *symbolQueue) Push(x interface{}) {
 	temp := x.(*symbolRecord)
-	*rs = append(*rs, temp)
+	*sq = append(*sq, temp)
 }
 
 // Pop 从 rs 中取出最优先的 record
-func (rs *symbolQueue) Pop() interface{} {
-	temp := (*rs)[len(*rs)-1]
-	*rs = (*rs)[0 : len(*rs)-1]
+func (sq *symbolQueue) Pop() interface{} {
+	temp := (*sq)[len(*sq)-1]
+	*sq = (*sq)[0 : len(*sq)-1]
 	return temp
 }

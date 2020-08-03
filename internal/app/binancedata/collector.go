@@ -76,7 +76,9 @@ func do(rs *records) {
 	tradesChan <- trades
 	//
 	size := len(trades)
+	// 1000 是 binance 能返回的最大数据量
 	if size < 1000 {
+		// 决定不在放回，所以总的任务量需要减少
 		rs.decrement()
 		msg := fmt.Sprintf("%s 从 %s 和 %d 获取的数据长度为 %d, 决定不再放回去。rs.remain = %d", symbol, localTime(utc), id, size, rs.getRemain())
 		bc.Fatal(msg)
@@ -92,16 +94,18 @@ func localTime(UTCInMillisecond int64) time.Time {
 	return time.Unix(0, UTCInMillisecond*1000000)
 }
 
+// symbolRecord 是按照时间顺序收集的
+// 所以，需要 check 函数来检查是否已经收到了新的日期。
 func checkFunc() func(r *symbolRecord) {
 	count := int64(0)
 	// milliseconds of one day
 	// binance api 返回的时间，都是 unix 的毫秒。
-	ms := int64(24 * 60 * 60 * 1000)
+	msOfOneDay := int64(24 * 60 * 60 * 1000) // 一天包含的毫秒数
 	return func(r *symbolRecord) {
 		if r == nil {
 			return
 		}
-		days := r.utc / ms
+		days := r.utc / msOfOneDay // record 的 utc 日期所代表的天数
 		if count < days {
 			count = days
 			msg := fmt.Sprintf("%s 已经收集到 %s, ID = %d", r.symbol, localTime(r.utc), r.id)

@@ -46,6 +46,7 @@ func (rs *records) decrement() {
 }
 
 // symbolRecord 是 priorityQueue 中的元素
+// symbolRecord 代表了数据库中最新一条数据的记录。
 type symbolRecord struct {
 	symbol string
 	utc    int64

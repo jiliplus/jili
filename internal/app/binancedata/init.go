@@ -42,6 +42,7 @@ func init() {
 	initialDBSaver()
 }
 
+// 初始化数据接收通道
 func initialDBSaver() {
 	tradesChan = make(chan []*trade, 30)
 	go func() {

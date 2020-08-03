@@ -7,7 +7,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jujili/jili/internal/pkg/tools"
+	"github.com/jujili/jili/pkg/tools"
 )
 
 func TestExit(t *testing.T) {

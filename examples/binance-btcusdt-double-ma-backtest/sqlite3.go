@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jujili/jili/internal/pkg/tools"
+	"github.com/jujili/jili/pkg/tools"
 	"github.com/mattn/go-sqlite3"
 )
 

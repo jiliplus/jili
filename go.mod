@@ -11,6 +11,15 @@ require (
 	github.com/pelletier/go-toml v1.8.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/stretchr/testify v1.5.1
+	github.com/aQuaYi/GoKit v0.0.0-20170805152833-88827a405d9b
+	github.com/markcheno/go-quote v0.0.0-20200628125824-4a6988efa814
+	github.com/markcheno/go-talib v0.0.0-20190307022042-cd53a9264d70
+	github.com/sirupsen/logrus v1.2.0
+	github.com/xormplus/xorm v0.0.0-20200731130200-6811f3bde592
+	github.com/xormplus/xorm v0.0.0-20200731130200-6811f3bde592
+	github.com/aQuaYi/stub v1.1.0
+	github.com/tilinna/clock v1.0.2
+	github.com/tilinna/clock v1.0.2
 )
 
 replace github.com/jujili/jili/internal => ../internal

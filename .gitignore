@@ -29,3 +29,6 @@
 
 # 不跟踪 data 目录
 data
+
+# 不要跟踪 local history 插件生成的历史文件
+.history
